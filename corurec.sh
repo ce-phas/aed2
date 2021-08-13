@@ -8,19 +8,21 @@
 # ICEI PUC Minas.
 #
 # Author:  Pedro Sa (pedro-as)
-# Version: 1.0
+# Version: 1.1
 # Date:    2021-08-11
 #
 
-USAGE="Utilizacao: $0 <nome da classe> <nome da entrada> <nome da saida>"
+PUBIN=pub.in
+PUBOUT=pub.out
+USAGE="Utilizacao: $0 <nome do arquivo sem extensao>  <nome da saida>"
 SUCCESS="SUCESSO: saida correta!"
 
-if [ "$#" -lt "3" ]; then
+if [ "$#" -lt "2" ]; then
     echo -e $USAGE;
 else
     if gcc -o $1 $1.c; then
-        ./$1 < $2.in > $3.out
-        if diff -wB $2.out $3.out; then
+        ./$1 < $PUBIN > $2.out
+        if diff -wB $2.out $PUBOUT; then
             echo $SUCCESS;
         fi
     fi

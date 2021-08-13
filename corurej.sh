@@ -8,7 +8,7 @@
 # ICEI PUC Minas.
 #
 # Author:  Pedro Sa (pedro-as)
-# Version: 1.0
+# Version: 1.1
 # Date:    2021-08-04
 #
 
@@ -22,7 +22,7 @@ if [ "$#" -lt "2" ]; then
 else
     if javac $1.java; then
         java $1 < $PUBIN > $2.out
-        if diff -wB $PUBOUT $2.out; then
+        if diff -wB $2.out $PUBOUT; then
             echo $SUCCESS;
         fi
     fi

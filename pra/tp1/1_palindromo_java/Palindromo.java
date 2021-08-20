@@ -3,7 +3,7 @@
  * de entrada sao palindromos e retorna os resultados
  *
  * @author Pedro Sa (742626)
- * @version 1.0
+ * @version 1.1
  * @since 2021-08-03
  */
 public class Palindromo
@@ -36,14 +36,14 @@ public class Palindromo
     {
         // definir dados
         String line;
-        int length;
 
         // ler a primeira linha
         line = MyIO.readLine();
 
         while (!(line.charAt(0) == 'F' &&
                  line.charAt(1) == 'I' &&
-                 line.charAt(2) == 'M'))
+                 line.charAt(2) == 'M' &&
+                 line.length() == 3))
         {
             // chamar metodo para verificacao e saida
             if (isPalindrome(line))

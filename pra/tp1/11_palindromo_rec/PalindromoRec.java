@@ -1,12 +1,12 @@
 /**
- * Palindromo - programa que verifica se cadeias de caracteres
+ * Palindromo Recursivo - programa que verifica se cadeias de caracteres
  * de entrada sao palindromos e retorna os resultados
  *
  * @author Pedro Sa (742626)
  * @version 1.1
  * @since 2021-08-03
  */
-public class Palindromo
+public class PalindromoRec
 {
     /**
      * Este metodo determina se uma cadeia de caracteres configura
@@ -14,22 +14,21 @@ public class Palindromo
      * @param line Cadeia de caracteres a ser testada.
      * @return true, se for um palindromo; false, caso contrario.
      */
-    public static boolean isPalindrome(String line)
+    public static boolean isPalindrome(String line, int i, int j)
     {
-        // definir dados
-        boolean pal = true;
-        int length = line.length();
-        int i = 0;
-        int j = length - 1;
-
-        while (pal && j > i)
+        if (i == j)
         {
-            pal = pal && (line.charAt(j) == line.charAt(i));
-            i++;
-            j--;
+            return true;
         }
-
-        return pal;
+        else if (line.charAt(i) != line.charAt(j))
+        {
+            return false;
+        }
+        else if (i < j)
+        {
+            return isPalindrome(line, i+1, j-1);
+        }
+        return true;
     }
 
     public static void main(String args[])
@@ -45,8 +44,11 @@ public class Palindromo
                  line.charAt(2) == 'M' &&
                  line.length() == 3))
         {
+            // encontrar ultimo indice da string
+            int j = line.length() - 1;
+
             // chamar metodo para verificacao e saida
-            if (isPalindrome(line))
+            if (isPalindrome(line, 0, j))
                 MyIO.println("SIM");
             else
                 MyIO.println("NAO");

@@ -51,6 +51,7 @@ public class Html
 
     public static int[] count(String html)
     {
+        // definir dados
         int totals[] = new int[25];
         int n = html.length();
         int c;
@@ -59,14 +60,16 @@ public class Html
         {
             c = (int) html.charAt(i);
 
-            if (c == 60)
+            if (c == 60) // testar se caractere = '<'
             {
+                // testar se e' uma tag <br>
                 if (html.charAt(i+1) == 'b' && html.charAt(i+2) == 'r' &&
                     html.charAt(i+3) == '>')
                 {
                     totals[23]++;
                     i += 3;
                 }
+                // testar se e' uma tag <table>
                 else if (html.charAt(i+1) == 't' && html.charAt(i+2) == 'a' &&
                          html.charAt(i+6) == '>')
                 {
@@ -145,6 +148,7 @@ public class Html
                         totals[21]++;
                         break;
                     default:
+                        // testa se caractere e' consoante (vogais descartadas)
                         if (isLetter((char) c))
                             totals[22]++;
                         break;
@@ -168,6 +172,8 @@ public class Html
         int iKeys[] = {97, 101, 105, 111, 117, 225, 233, 237, 243, 250, 224,
                        232, 236, 242, 249, 227, 245, 226, 234, 238, 244, 251};
         String sKeys[] = {"consoante", "<br>", "<table>"};
+
+        // tamanho do primeiro arranjo de chaves
         int n = iKeys.length;
 
         // ler dados
@@ -184,14 +190,17 @@ public class Html
 
             for (int i = 0; i < 22; i++)
             {
+                // mostrar caracteres e totais
                 MyIO.print((char) iKeys[i] + "(" + totals[i] + ") ");
             }
 
             for (int i = 0; i < 3; i++)
             {
+                // mostrar tags e consoantes e totais
                 MyIO.print(sKeys[i] + "(" + totals[i + 22] + ") ");
             }
 
+            // mostrar titulo da pagina
             MyIO.println(title);
 
             // ler nova string

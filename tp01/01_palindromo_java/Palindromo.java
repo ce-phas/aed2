@@ -24,6 +24,8 @@ public class Palindromo
 
         while (pal && j > i)
         {
+            // testar se caractere na posicao atual e' igual ao
+            // caractere na posicao espelhada
             pal = pal && (line.charAt(j) == line.charAt(i));
             i++;
             j--;

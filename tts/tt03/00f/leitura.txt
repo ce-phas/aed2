@@ -1,0 +1,5 @@
+inteiro: 1
+real: 5.3
+caractere:  
+boleano: false
+str: true

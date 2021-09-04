@@ -1,4 +1,4 @@
-public class Algebra
+public class AlgebraRec
 {
     /**
      * Verifica se o caractere e' representacao de um binario.
@@ -133,7 +133,7 @@ public class Algebra
 
     /**
      * Faz o parse da expressao inteira por meio da resolucao
-     * iterativa de subexpressoes completas.
+     * recursiva de subexpressoes completas.
      * @param terms Total de termos distintos na expressao.
      * @return Resultado da expressao booleana (0 ou 1).
     */
@@ -144,7 +144,9 @@ public class Algebra
         char c;
         String aux = "";
 
-        while (len > 1) {
+        if (len == 1) {
+            return exp;
+        } else {
             while (i < len) {
                 c = exp.charAt(i);
 
@@ -183,13 +185,8 @@ public class Algebra
                 }
                 n = 0;
             }
-            i = 0;
-            exp = aux;
-            aux = "";
-            len = exp.length();
+            return parseExpression(terms, aux);
         }
-
-        return exp;
     }
 
     public static void main(String[] args)

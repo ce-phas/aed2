@@ -1,3 +1,6 @@
+import java.io.*;
+
+
 public class Series {
     // definir atributos
     private String nome;
@@ -128,15 +131,26 @@ public class Series {
     }
 
     // metodo ler
-    public void ler() {
-        this.nome = MyIO.readLine();
-        this.formato = MyIO.readLine();
-        this.duracao = MyIO.readLine();
-        this.paisDeOrigem = MyIO.readLine();
-        this.idiomaOriginal = MyIO.readLine();
-        this.emissoraDeTelevisao = MyIO.readLine();
-        this.transmissaoOriginal = MyIO.readLine();
-        this.numeroTemporadas = MyIO.readInt();
-        this.numeroEpisodios = MyIO.readInt();
+    public void ler(String path) throws Exception {
+        InputStreamReader isr = new InputStreamReader(new FileInputStream(path));
+        BufferedReader br = new BufferedReader(isr);
+
+        while (!br.readLine().contains("infobox_v2"));
+        br.readLine();
+        this.setNome(parseHtml(br.readLine()));
+
+        br.close();
+    }
+
+    public String parseHtml(String line) {
+        // limpar tags e referencias de caracteres html com regex
+        return line.replaceAll("(<[^>]*>)|(&.*?;)", "");
+    }
+
+    public static void main(String[] args) throws Exception {
+        Series serie = new Series();
+        String fileName;
+        serie.ler("/tmp/series/" + fileName);
+        serie.imprimir();
     }
 }

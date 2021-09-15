@@ -132,12 +132,40 @@ public class Series {
 
     // metodo ler
     public void ler(String path) throws Exception {
-        InputStreamReader isr = new InputStreamReader(new FileInputStream(path));
+        InputStreamReader isr = new InputStreamReader(new FileInputStream(path), "UTF-8");
         BufferedReader br = new BufferedReader(isr);
+        String s = "";
+
+        while (!s.contains("<title>")) {
+            s = br.readLine();
+        }
+        this.setNome(parseHtmlTitle(s));
 
         while (!br.readLine().contains("infobox_v2"));
-        br.readLine();
-        this.setNome(parseHtml(br.readLine()));
+        while (!br.readLine().contains("Formato"));
+        this.setFormato(parseHtml(br.readLine()));
+
+        while (!br.readLine().contains("Duração"));
+        this.setDuracao(parseHtml(br.readLine()));
+
+        while (!br.readLine().contains("País de origem"));
+        this.setPaisDeOrigem(parseHtml(br.readLine()));
+
+        while (!br.readLine().contains("Idioma original"));
+        this.setIdiomaOriginal(parseHtml(br.readLine()));
+
+        while (!br.readLine().contains("Emissora de televisão original"));
+        this.setEmissoraDeTelevisao(parseHtml(br.readLine()));
+
+        while (!br.readLine().contains("Transmissão original"));
+        this.setTransmissaoOriginal(parseHtml(br.readLine()));
+
+        while (!br.readLine().contains("N.º de temporadas"));
+        this.setNumeroTemporadas(parseHtmlInt(br.readLine()));
+
+        while (!br.readLine().contains("N.º de episódios"));
+        this.setNumeroEpisodios(parseHtmlInt(br.readLine()));
+
 
         br.close();
     }
@@ -147,10 +175,34 @@ public class Series {
         return line.replaceAll("(<[^>]*>)|(&.*?;)", "");
     }
 
-    public static void main(String[] args) throws Exception {
+    public int parseHtmlInt(String line) {
+        // limpar tags e referencias de caracteres html com regex
+        return Integer.parseInt(line.replaceAll("(<[^>]*>)|(\\d+)|(.*)", "$2"));
+    }
+
+    public String parseHtmlTitle(String line) {
+        // limpar tags e referencias de caracteres html com regex
+        return line.replaceAll("(<[^>]*>)|(–.*)|(\\s\\(.*\\)\\s)", "");
+    }
+    
+
+    public static void main(String[] args) {
+        MyIO.setCharset("UTF-8");
+
         Series serie = new Series();
-        String fileName;
-        serie.ler("/tmp/series/" + fileName);
-        serie.imprimir();
+        String fileName = MyIO.readLine();
+
+        while (!fileName.equals("FIM")) {
+            
+            try {
+                serie.ler("/tmp/series/" + fileName);
+            } catch (Exception e) {
+                MyIO.println("Erro ao ler arquivo `" + fileName + "`");
+            }
+            
+            serie.imprimir();
+
+            fileName = MyIO.readLine();
+        }
     }
 }

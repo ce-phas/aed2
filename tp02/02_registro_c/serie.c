@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
+// definir struct
 typedef struct Series {
     char nome[100];
     char formato[100];
@@ -15,6 +16,12 @@ typedef struct Series {
     int numeroEpisodios;
 } Serie;
 
+
+/**
+ * Remove as tags de uma linha no formato HTML e outros caracteres indesejados.
+ * @param  old  Linha em formato HTML.
+ * @return      String contendo o titulo da serie.
+ */
 char *parseTitle(char *old) {
     int i = 0;
     int j = 0;
@@ -42,6 +49,12 @@ char *parseTitle(char *old) {
     return new;
 }
 
+
+/**
+ * Remove as tags de uma linha no formato HTML e outros caracteres indesejados.
+ * @param  old  Linha em formato HTML.
+ * @return      String contendo o valor procurado.
+ */
 char *parseHtml(char *old) {
     int i = 0;
     int j = 0;
@@ -70,6 +83,12 @@ char *parseHtml(char *old) {
     return new;
 }
 
+
+/**
+ * Remove as tags de uma linha no formato HTML e outros caracteres indesejados.
+ * @param  old  Linha em formato HTML.
+ * @return      Valor procurado, convertido para inteiro.
+ */
 int parseInt(char *old) {
     int i = 0;
     int j = 0;
@@ -98,18 +117,33 @@ int parseInt(char *old) {
     return atoi(new);
 }
 
+
+/**
+ * Le de um arquivo HTML as linhas contendo os valores que serao designados
+ * a cada atributo.
+ * @param path Caminho do arquivo no SO.
+ * @param serie Ponteiro do objeto a modificar.
+ */
 void ler(char *path, Serie *serie) {
+    // abrir arquivo e definir buffer
     FILE *fp = fopen(path, "r");
     char buffer[2000];
 
+    // ler primeira linha do arquivo
     fgets(buffer, 2000, fp);
 
+    // procurar linha que contem titulo
     while (strstr(buffer, "<title>") == NULL) fgets(buffer, 2000, fp);
+
+    // fazer parse do valor e atribuir
     strcpy(serie->nome, parseTitle(buffer));
     fgets(buffer, 2000, fp);
 
-
+    // procurar tabela que contem o restante dos dados
     while (strstr(buffer, "infobox_v2") == NULL) fgets(buffer, 2000, fp);
+
+    // buscar as linhas que precedem dado procurado, fazer parse e passar
+    // valor ao respectivo atributo
     while (strstr(buffer, "Formato") == NULL) fgets(buffer, 2000, fp);
     fgets(buffer, 2000, fp);
     strcpy(serie->formato, parseHtml(buffer));
@@ -142,9 +176,15 @@ void ler(char *path, Serie *serie) {
     fgets(buffer, 2000, fp);
     serie->numeroEpisodios = parseInt(buffer);
 
+    // fechar arquivo
     fclose(fp);
 }
 
+
+/**
+ * Mostra na tela os valores de cada atributo, separados por espaco.
+ * @param serie Objeto a acessar.
+*/
 void imprimir(Serie serie) {
     printf("%s %s %s %s %s %s %s %d %d\n",
            serie.nome, serie.formato, serie.duracao, serie.paisDeOrigem,
@@ -152,18 +192,34 @@ void imprimir(Serie serie) {
            serie.numeroTemporadas, serie.numeroEpisodios);
 }
 
+
+/* Main */
+
 int main(void) {
+    // criar struct
     struct Series serie;
+
+    // definir buffer e ler nome do arquivo
     char buffer[200];
     fgets(buffer, 200, stdin);
 
     while (strcmp(buffer, "FIM\n") != 0)
     {
         char path[80] = "/tmp/series/";
+
+        // limpar quebra de linha no buffer
         buffer[strcspn(buffer, "\n")] = 0;
+
+        // concatenar diretorio e nome do arquivo
         strcat(path, buffer);
+
+        // ler arquivo HTML e atribuir valores
         ler(path, &serie);
+
+        // mostrar valores da struct
         imprimir(serie);
+
+        // ler nome do proximo arquivo
         fgets(buffer, 200, stdin);
     }
 

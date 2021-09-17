@@ -19,15 +19,15 @@ public class Series {
 
     /**
      * Construtor que recebe parametros para todos os atributos do objeto.
-     * @param nome Titulo da serie
-     * @param formato Descricao do formato da serie
-     * @param duracao Descricao do tempo de duracao da serie
-     * @param paisDeOrigem Pais de origem da serie
-     * @param idiomaOriginal Idioma original da serie
-     * @param emissoraDeTelevisao Emissora de televisao da serie
-     * @param transmissaoOriginal Periodo de transmissao original da serie
-     * @param numeroTemporadas Total de temporadas da serie
-     * @param numeroEpisodios Total de episodios da serie
+     * @param nome Titulo da serie.
+     * @param formato Descricao do formato da serie.
+     * @param duracao Descricao do tempo de duracao da serie.
+     * @param paisDeOrigem Pais de origem da serie.
+     * @param idiomaOriginal Idioma original da serie.
+     * @param emissoraDeTelevisao Emissora de televisao da serie.
+     * @param transmissaoOriginal Periodo de transmissao original da serie.
+     * @param numeroTemporadas Total de temporadas da serie.
+     * @param numeroEpisodios Total de episodios da serie.
      */
     Series(String nome, String formato, String duracao, String paisDeOrigem,
            String idiomaOriginal, String emissoraDeTelevisao, String transmissaoOriginal,

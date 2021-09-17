@@ -1,6 +1,5 @@
 import java.io.*;
 
-
 public class Series {
     // definir atributos
     private String nome;
@@ -184,7 +183,7 @@ public class Series {
         // limpar tags e referencias de caracteres html com regex
         return line.replaceAll("(<[^>]*>)|(–.*)|(\\s\\(.*\\)\\s)", "");
     }
-    
+
 
     public static void main(String[] args) {
         MyIO.setCharset("UTF-8");
@@ -193,13 +192,13 @@ public class Series {
         String fileName = MyIO.readLine();
 
         while (!fileName.equals("FIM")) {
-            
+
             try {
                 serie.ler("/tmp/series/" + fileName);
             } catch (Exception e) {
                 MyIO.println("Erro ao ler arquivo `" + fileName + "`");
             }
-            
+
             serie.imprimir();
 
             fileName = MyIO.readLine();

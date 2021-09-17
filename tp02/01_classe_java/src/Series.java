@@ -12,9 +12,23 @@ public class Series {
     private int numeroTemporadas;
     private int numeroEpisodios;
 
-    // construtores
+
+    /* Construtores */
+
     Series() {}
 
+    /**
+     * Construtor que recebe parametros para todos os atributos do objeto.
+     * @param nome Titulo da serie
+     * @param formato Descricao do formato da serie
+     * @param duracao Descricao do tempo de duracao da serie
+     * @param paisDeOrigem Pais de origem da serie
+     * @param idiomaOriginal Idioma original da serie
+     * @param emissoraDeTelevisao Emissora de televisao da serie
+     * @param transmissaoOriginal Periodo de transmissao original da serie
+     * @param numeroTemporadas Total de temporadas da serie
+     * @param numeroEpisodios Total de episodios da serie
+     */
     Series(String nome, String formato, String duracao, String paisDeOrigem,
            String idiomaOriginal, String emissoraDeTelevisao, String transmissaoOriginal,
            int numeroTemporadas, int numeroEpisodios) {
@@ -30,7 +44,9 @@ public class Series {
         this.numeroEpisodios = numeroEpisodios;
     }
 
-    // metodos gets
+
+    /* Getters */
+
     public String getNome() {
         return this.nome;
     }
@@ -67,7 +83,9 @@ public class Series {
         return this.numeroEpisodios;
     }
 
-    // metodos sets
+
+    /* Setters */
+
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -104,7 +122,9 @@ public class Series {
         this.numeroEpisodios = numeroEpisodios;
     }
 
-    // metodo clone
+
+    /* Clone */
+
     public Series clone() {
         Series clone = new Series();
 
@@ -121,7 +141,12 @@ public class Series {
         return clone;
     }
 
-    // metodo imprimir
+
+    /* Entrada e saida */
+
+    /**
+     * Mostra na tela os valores de cada atributo, separados por espaco.
+    */
     public void imprimir() {
         MyIO.println(nome + " " + formato + " " + duracao + " " + paisDeOrigem
                      + " " + idiomaOriginal + " " + emissoraDeTelevisao + " "
@@ -129,18 +154,33 @@ public class Series {
                      + numeroEpisodios);
     }
 
-    // metodo ler
+
+    /**
+     * Le de um arquivo HTML as linhas contendo os valores que serao designados
+     * a cada atributo.
+     * @param path Caminho do arquivo no SO.
+     * @throws Exception
+     */
     public void ler(String path) throws Exception {
+        // criar objeto BufferedReader para leitura do arquivo
         InputStreamReader isr = new InputStreamReader(new FileInputStream(path), "UTF-8");
         BufferedReader br = new BufferedReader(isr);
+
+        // string auxiliar para receber titulo
         String s = "";
 
+        // procurar linha que contem titulo
         while (!s.contains("<title>")) {
             s = br.readLine();
         }
+        // fazer parse do valor e atribuir
         this.setNome(parseHtmlTitle(s));
 
+        // procurar tabela que contem o restante dos dados
         while (!br.readLine().contains("infobox_v2"));
+
+        // buscar as linhas que precedem dado procurado, fazer parse e passar
+        // valor ao respectivo atributo
         while (!br.readLine().contains("Formato"));
         this.setFormato(parseHtml(br.readLine()));
 
@@ -165,9 +205,12 @@ public class Series {
         while (!br.readLine().contains("N.º de episódios"));
         this.setNumeroEpisodios(parseHtmlInt(br.readLine()));
 
-
+        // fechar arquivo
         br.close();
     }
+
+
+    /* Metodos auxiliares */
 
     public String parseHtml(String line) {
         // limpar tags e referencias de caracteres html com regex
@@ -185,22 +228,30 @@ public class Series {
     }
 
 
+    /* Main */
+
     public static void main(String[] args) {
+        // definir charset
         MyIO.setCharset("UTF-8");
 
+        // instanciar objeto com construtor-padrao
         Series serie = new Series();
+
+        // ler nome do arquivo a ler
         String fileName = MyIO.readLine();
 
         while (!fileName.equals("FIM")) {
-
             try {
+                // tentar ler arquivo
                 serie.ler("/tmp/series/" + fileName);
             } catch (Exception e) {
                 MyIO.println("Erro ao ler arquivo `" + fileName + "`");
             }
 
+            // mostrar valores dos atributos
             serie.imprimir();
 
+            // ler novo nome de arquivo
             fileName = MyIO.readLine();
         }
     }

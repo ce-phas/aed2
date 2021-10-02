@@ -1,6 +1,11 @@
 import java.io.*;
+import java.util.*;
+import java.time.*;
 
 public class SeriesLinear {
+    // definir variável de contagem
+    public static int cmpCount = 0;
+
     // definir atributos
     private String nome;
     private String formato;
@@ -127,8 +132,8 @@ public class SeriesLinear {
 
     /* Clone */
 
-    public Series clone() {
-        Series clone = new Series();
+    public SeriesLinear clone() {
+        SeriesLinear clone = new SeriesLinear();
 
         clone.setNome(this.nome);
         clone.setFormato(this.formato);
@@ -163,20 +168,16 @@ public class SeriesLinear {
      * @param path Caminho do arquivo no SO.
      * @throws Exception
      */
-    public void ler(String path) throws Exception {
+    public void ler(String fileName) throws Exception {
+        // definir caminho do arquivo
+        String path = "/tmp/series/" + fileName;
+
         // criar objeto BufferedReader para leitura do arquivo
         InputStreamReader isr = new InputStreamReader(new FileInputStream(path), "UTF-8");
         BufferedReader br = new BufferedReader(isr);
 
-        // string auxiliar para receber titulo
-        String s = "";
-
-        // procurar linha que contem titulo
-        while (!s.contains("<title>")) {
-            s = br.readLine();
-        }
-        // fazer parse do valor e atribuir
-        this.setNome(parseHtmlTitle(s));
+        // atribuir título
+        this.setNome(parseTitle(fileName));
 
         // procurar tabela que contem o restante dos dados
         while (!br.readLine().contains("infobox_v2"));
@@ -211,22 +212,6 @@ public class SeriesLinear {
         br.close();
     }
 
-
-    /* Pesquisa */
-    public boolean search(String value, String[] array) {
-        boolean found = false;
-        int n = array.length;
-        int i = 0;
-
-        while (!found && i < n) {
-            found = array[i] == value;
-            i++;
-        }
-
-        return found;
-    }
-
-
     /* Metodos auxiliares */
 
     public String parseHtml(String line) {
@@ -239,9 +224,42 @@ public class SeriesLinear {
         return Integer.parseInt(line.replaceAll("(<[^>]*>)|(\\d+)|(.*)", "$2"));
     }
 
-    public String parseHtmlTitle(String line) {
-        // limpar tags e referencias de caracteres html com regex
-        return line.replaceAll("(<[^>]*>)|(–.*)|(\\s\\(.*\\)\\s)", "");
+    public String parseTitle(String fileName) {
+        String title = "";
+        int n = fileName.length() - 5;
+
+        for (int i = 0; i < n; i++)
+        {
+            if (fileName.charAt(i) == '_') {
+                title += ' ';
+            } else {
+                title += fileName.charAt(i);
+            }
+        }
+        return title;
+    }
+
+    /* Pesquisa */
+
+    public static boolean search(List<SeriesLinear> seriesList, String term) {
+        boolean found = false;
+        ListIterator<SeriesLinear> seriesIter = seriesList.listIterator();
+
+        while (!found && seriesIter.hasNext()) {
+            found = term.equals(seriesIter.next().getNome());
+            cmpCount++;
+        }
+
+        return found;
+    }
+
+    /* Arquivo log */
+
+    public static void logFile(double t) throws Exception {
+        FileWriter fw = new FileWriter("742626_sequencial.txt");
+        BufferedWriter writer = new BufferedWriter(fw);
+        writer.write("742626\t" + t + "s\t" + cmpCount);
+        writer.close();
     }
 
 
@@ -251,25 +269,44 @@ public class SeriesLinear {
         // definir charset
         MyIO.setCharset("UTF-8");
 
-        // instanciar objeto com construtor-padrao
-        SeriesLinear serie = new SeriesLinear();
+        // definir dados
+        double start;
+        double end;
+        double runtime;
+        List<SeriesLinear> series = new ArrayList<SeriesLinear>();
 
         // ler nome do arquivo a ler
-        String fileName = MyIO.readLine();
+        String line = MyIO.readLine();
 
-        while (!fileName.equals("FIM")) {
-            try {
-                // tentar ler arquivo
-                serie.ler("/tmp/series/" + fileName);
-            } catch (Exception e) {
-                MyIO.println("Erro ao ler arquivo `" + fileName + "`");
-            }
-
-            // mostrar valores dos atributos
-            serie.imprimir();
+        while (!line.equals("FIM")) {
+            SeriesLinear serie = new SeriesLinear();
+            series.add(serie);
+            serie.setNome(serie.parseTitle(line));
 
             // ler novo nome de arquivo
-            fileName = MyIO.readLine();
+            line = MyIO.readLine();
+        }
+        
+        line = MyIO.readLine();
+
+        start = new Date().getTime();
+        while (!line.equals("FIM")) {
+            if (search(series, line)) {
+                MyIO.println("SIM");
+            } else {
+                MyIO.println("NÃO");
+            }
+
+            line = MyIO.readLine();
+        }
+
+        end = new Date().getTime();
+        runtime = (end - start) / 1000.0;
+
+        try {
+            logFile(runtime);
+        } catch (Exception e) {
+            MyIO.println("Erro ao criar arquivo de log");
         }
     }
 }

@@ -8,7 +8,7 @@ import java.time.*;
  * @since 2021-10-02
  */
 
-public Series {
+class Series {
 
     // definir atributos
     private String nome;

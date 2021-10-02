@@ -1,7 +1,8 @@
 import java.io.*;
 import java.util.*;
+import java.time.*;
 
-public class SeriesLinear {
+public class SeriesBin {
     // definir variável de contagem
     public static int cmpCount = 0;
 
@@ -19,7 +20,7 @@ public class SeriesLinear {
 
     /* Construtores */
 
-    SeriesLinear() {}
+    SeriesBin() {}
 
     /**
      * Construtor que recebe parametros para todos os atributos do objeto.
@@ -33,7 +34,7 @@ public class SeriesLinear {
      * @param numeroTemporadas Total de temporadas da serie.
      * @param numeroEpisodios Total de episodios da serie.
      */
-    SeriesLinear(
+    SeriesBin(
         String nome, String formato, String duracao, String paisDeOrigem,
         String idiomaOriginal, String emissoraDeTelevisao,
         String transmissaoOriginal,int numeroTemporadas,
@@ -131,8 +132,8 @@ public class SeriesLinear {
 
     /* Clone */
 
-    public SeriesLinear clone() {
-        SeriesLinear clone = new SeriesLinear();
+    public SeriesBin clone() {
+        SeriesBin clone = new SeriesBin();
 
         clone.setNome(this.nome);
         clone.setFormato(this.formato);
@@ -240,13 +241,27 @@ public class SeriesLinear {
 
     /* Pesquisa */
 
-    public static boolean search(List<SeriesLinear> seriesList, String term) {
+    public static boolean search(List<SeriesBin> seriesList, String term) {
+        int lpos = 0;
+        int rpos = seriesList.size();
+        int mpos;
         boolean found = false;
-        ListIterator<SeriesLinear> seriesIter = seriesList.listIterator();
 
-        while (!found && seriesIter.hasNext()) {
-            found = term.equals(seriesIter.next().getNome());
-            cmpCount++;
+        while (lpos <= rpos) {
+            mpos = (rpos + lpos) / 2;
+            String elem = seriesList.get(mpos).getNome();
+
+            if (term.equals(elem)) {
+                cmpCount++;
+                found = true;
+                lpos = rpos + 1;
+            } else if (term.compareTo(elem) > 0) {
+                cmpCount++;
+                lpos = mpos + 1;
+            } else {
+                rpos = mpos - 1;
+            }
+            MyIO.println();
         }
 
         return found;
@@ -255,7 +270,7 @@ public class SeriesLinear {
     /* Arquivo log */
 
     public static void logFile(double t) throws Exception {
-        FileWriter fw = new FileWriter("742626_sequencial.txt");
+        FileWriter fw = new FileWriter("742626_binaria.txt");
         BufferedWriter writer = new BufferedWriter(fw);
         writer.write("742626\t" + t + "s\t" + cmpCount);
         writer.close();
@@ -272,13 +287,13 @@ public class SeriesLinear {
         double start;
         double end;
         double runtime;
-        List<SeriesLinear> series = new ArrayList<SeriesLinear>();
+        List<SeriesBin> series = new ArrayList<SeriesBin>();
 
         // ler nome do arquivo a ler
         String line = MyIO.readLine();
 
         while (!line.equals("FIM")) {
-            SeriesLinear serie = new SeriesLinear();
+            SeriesBin serie = new SeriesBin();
             series.add(serie);
             serie.setNome(serie.parseTitle(line));
 
@@ -307,5 +322,9 @@ public class SeriesLinear {
         } catch (Exception e) {
             MyIO.println("Erro ao criar arquivo de log");
         }
+
+        /*(for (int i = 0; i < series.size(); i++) {
+            MyIO.print(series.get(i).getNome()+",");
+        }*/
     }
 }

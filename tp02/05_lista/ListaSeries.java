@@ -158,10 +158,15 @@ class Series {
      * Mostra na tela os valores de cada atributo, separados por espaco.
     */
     public void imprimir() {
-        MyIO.println(nome + " " + formato + " " + duracao + " " + paisDeOrigem
-                     + " " + idiomaOriginal + " " + emissoraDeTelevisao + " "
-                     + transmissaoOriginal + " " + numeroTemporadas + " "
-                     + numeroEpisodios);
+        String strSerie = (
+            nome + " " + formato + " " + duracao + " " + paisDeOrigem
+            + " " + idiomaOriginal + " " + emissoraDeTelevisao + " "
+            + transmissaoOriginal);
+        MyIO.println(trimSpace(strSerie) + " " + numeroTemporadas + " " + numeroEpisodios);
+    }
+
+    public String trimSpace(String s) {
+        return s.replaceAll("(\\s){2,}", " ");
     }
 
 
@@ -313,7 +318,7 @@ public class ListaSeries {
             throw new Exception("ERRO: tamanho excedido");
         }
 
-        for (int i = size; i > 0; i--) {
+        for (int i = size; i > index; i--) {
             Series temp = lista[i-1].clone();
             lista[i] = temp;
         }

@@ -193,28 +193,28 @@ class Series {
         // buscar as linhas que precedem dado procurado, fazer parse e passar
         // valor ao respectivo atributo
         while (!br.readLine().contains("Formato"));
-        this.setFormato(removeTags(br.readLine()));
+        this.setFormato(parseHtml(br.readLine()));
 
         while (!br.readLine().contains("Duração"));
-        this.setDuracao(removeTags(br.readLine()));
+        this.setDuracao(parseHtml(br.readLine()));
 
         while (!br.readLine().contains("País de origem"));
-        this.setPaisDeOrigem(removeTags(br.readLine()));
+        this.setPaisDeOrigem(parseHtml(br.readLine()));
 
         while (!br.readLine().contains("Idioma original"));
-        this.setIdiomaOriginal(removeTags(br.readLine()));
+        this.setIdiomaOriginal(parseHtml(br.readLine()));
 
         while (!br.readLine().contains("Emissora de televisão original"));
-        this.setEmissoraDeTelevisao(removeTags(br.readLine()));
+        this.setEmissoraDeTelevisao(parseHtml(br.readLine()));
 
         while (!br.readLine().contains("Transmissão original"));
-        this.setTransmissaoOriginal(removeTags(br.readLine()));
+        this.setTransmissaoOriginal(parseHtml(br.readLine()));
 
         while (!br.readLine().contains("N.º de temporadas"));
-        this.setNumeroTemporadas(justInt(removeTags(br.readLine())));
+        this.setNumeroTemporadas(parseHtmlInt(br.readLine()));
 
         while (!br.readLine().contains("N.º de episódios"));
-        this.setNumeroEpisodios(justInt(removeTags(br.readLine())));
+        this.setNumeroEpisodios(parseHtmlInt(br.readLine()));
 
         // fechar arquivo
         br.close();
@@ -246,40 +246,6 @@ class Series {
         }
         return title;
     }
-
-    //método para tratar a linha, deixar apenas números e converter o retorno de String para Integer
-    public int justInt(String line){
-        String resp = "";
-        for(int i = 0; i < line.length(); i++){
-            if(line.charAt(i) >= '0' && line.charAt(i) <= '9'){ //caso o caracter seja um número ele é concatenado a variável resp
-                resp += line.charAt(i);
-            } else { //caso seja outro caracter, o i recebe o valor da condição de parada e o método de repetição é encerrado
-                i = line.length();
-            }
-        }
-        return Integer.parseInt(resp); //conversão da string resp para número inteiro a ser retornado
-    }
-
-    //método para a remoção das tags da linha lida do arquivo para retornar apenas o que é desejado
-    public String removeTags(String line){
-        String resp = "";
-        int i = 0;
-        while(i < line.length()){ //enquanto i for menor que o tamanho da String linha
-            if(line.charAt(i) == '<'){ // é testado para verificar se o contador i ainda está dentro das tags
-                i++;
-                while(line.charAt(i) != '>') i++; //ao encontrar o sinal de fechamento das tags o laço de repetição é encerrado
-            } else if(line.charAt(i) == '&'){ //mesmo tratamento de cima mas para outras exceções presentes em alguns outros arquivos
-                i++;
-                while(line.charAt(i) != ';') i++;
-            } else { //o que estiver fora das tags é concatenado a String resp a ser retornada
-                resp += line.charAt(i);
-            }
-            i++;
-        }
-        //System.out.println(resp);
-        return resp;
-    }
-
 }
 
 public class PilhaSeries {

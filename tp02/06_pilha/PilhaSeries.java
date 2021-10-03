@@ -248,32 +248,50 @@ class Series {
 }
 
 public class PilhaSeries {
+    // declarar arranjo e tamanho
     private Series pilha[];
     private int size;
 
+    // construtor padrão
     public PilhaSeries() {
         pilha = new Series[100];
         size = 0;
     }
 
+    /**
+     * Insere um objeto Series no fim da pilha.
+     * @param serie Objeto a inserir.
+     * @throws Exception
+     */
     public void inserir(Series serie) throws Exception {
         if (size >= pilha.length) {
             throw new Exception("ERRO: tamanho excedido");
         }
 
+        // inserir no fim e incrementar tamanho da pilha
         pilha[size] = serie;
         size++;
     }
 
+    /**
+     * Remove um objeto do fim da pilha.
+     * @throws Exception
+     */
     public void remover() throws Exception {
         if (size == 0) {
             throw new Exception("ERRO: pilha vazia");
         }
 
+        // guardar objeto removido e decrementar tamanho da pilha
         Series removed = pilha[--size].clone();
+
+        // mostrar atributo 'Nome' do objeto removido
         MyIO.println("(R) " + removed.getNome());
     }
 
+    /**
+     * Mostra todos os atributos de cada objeto da pilha.
+     */
     public void mostrar() {
         for (int i = size - 1; i >= 0; i--) {
             pilha[i].imprimir();
@@ -291,6 +309,7 @@ public class PilhaSeries {
         // ler nome do arquivo a ler
         String line = MyIO.readLine();
 
+        // criar e inserir objetos na pilha
         while (!line.equals("FIM")) {
             Series serie = new Series();
             try {
@@ -309,12 +328,15 @@ public class PilhaSeries {
             line = MyIO.readLine();
         }
 
+        // ler número de comandos para manipular a pilha
         commands = MyIO.readInt();
 
+        // repetir para o total de comandos
         for (int i = 0; i < commands; i++) {
             line = MyIO.readLine();
             char cmd = line.charAt(0);
 
+            // inserir objeto
             if (cmd == 'I') {
                 Series serie = new Series();
                 try {
@@ -328,6 +350,8 @@ public class PilhaSeries {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+            // remover objeto
             } else if (cmd == 'R') {
                 try {
                     pilha.remover();
@@ -337,6 +361,7 @@ public class PilhaSeries {
             }
         }
 
+        // mostrar objetos na pilha
         pilha.mostrar();
     }
 }

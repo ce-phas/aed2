@@ -1,6 +1,12 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * @author Pedro H. Amorim Sá
+ * @version 1.0
+ * @since 2021-10-02
+ */
+
 public class SeriesLinear {
     // definir variável de contagem
     public static int cmpCount = 0;
@@ -225,13 +231,17 @@ public class SeriesLinear {
 
     public String parseTitle(String fileName) {
         String title = "";
+
+        // remover 5 posições do fim referentes à extensão 'html'
         int n = fileName.length() - 5;
 
         for (int i = 0; i < n; i++)
         {
             if (fileName.charAt(i) == '_') {
+                // substituir underscore por espaço
                 title += ' ';
             } else {
+                // concatenar demais caracteres à nova string
                 title += fileName.charAt(i);
             }
         }
@@ -240,12 +250,23 @@ public class SeriesLinear {
 
     /* Pesquisa */
 
+    /**
+     * Método de pesquisa sequencial para uma lista de objetos SeriesLinear.
+     * @param seriesList Lista de objetos SeriesLinear.
+     * @param term Termo procurado dentre os nomes das séries.
+     * @return true, se encontrado; false, caso contrário.
+     */
     public static boolean search(List<SeriesLinear> seriesList, String term) {
         boolean found = false;
+
+        // instanciar o iterador para a lista
         ListIterator<SeriesLinear> seriesIter = seriesList.listIterator();
 
+        // procurar enquanto valor não for encontrado ou até o fim da lista
         while (!found && seriesIter.hasNext()) {
             found = term.equals(seriesIter.next().getNome());
+
+            // incrementar o contador de comparações
             cmpCount++;
         }
 
@@ -254,6 +275,12 @@ public class SeriesLinear {
 
     /* Arquivo log */
 
+    /**
+     * Método para criar um arquivo de log com matrícula, tempo de execução do
+     * algoritmo de busca utilizado e total de comparações.
+     * @param t Tempo de execução em segundos.
+     * @throws Exception
+     */
     public static void logFile(double t) throws Exception {
         FileWriter fw = new FileWriter("742626_sequencial.txt");
         BufferedWriter writer = new BufferedWriter(fw);
@@ -268,15 +295,18 @@ public class SeriesLinear {
         // definir charset
         MyIO.setCharset("UTF-8");
 
-        // definir dados
+        // definir dados para contagem de tempo de execução
         double start;
         double end;
         double runtime;
+
+        // instanciar lista de objetos
         List<SeriesLinear> series = new ArrayList<SeriesLinear>();
 
-        // ler nome do arquivo a ler
+        // ler nome do arquivo
         String line = MyIO.readLine();
 
+        // criar objetos e inserir na lista
         while (!line.equals("FIM")) {
             SeriesLinear serie = new SeriesLinear();
             series.add(serie);
@@ -285,10 +315,13 @@ public class SeriesLinear {
             // ler novo nome de arquivo
             line = MyIO.readLine();
         }
-        
+
         line = MyIO.readLine();
 
+        // iniciar contagem de tempo
         start = new Date().getTime();
+
+        // ler termos de pesquisa e buscar
         while (!line.equals("FIM")) {
             if (search(series, line)) {
                 MyIO.println("SIM");
@@ -299,9 +332,13 @@ public class SeriesLinear {
             line = MyIO.readLine();
         }
 
+        // encerrar contagem de tempo
         end = new Date().getTime();
+
+        // calcular tempo de execução em segundos
         runtime = (end - start) / 1000.0;
 
+        // registrar em arquivo log
         try {
             logFile(runtime);
         } catch (Exception e) {

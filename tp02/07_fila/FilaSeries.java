@@ -248,25 +248,35 @@ class Series {
 }
 
 public class FilaSeries {
+    // declarar arranjo e variáveis de posição
     private Series fila[];
     private int first;
     private int last;
 
+    // construtor-padrão com fila de tamanho 5
     public FilaSeries() {
         fila = new Series[6];
         first = 0;
         last = first;
     }
 
+    /**
+     * Insere um objeto Series no fim da fila.
+     * @param serie Objeto a inserir.
+     * @throws Exception
+     */
     public void inserir(Series serie) {
+        // verificar se a posição de inserção é permitida
         while (((last + 1) % fila.length) == first) {
             try {
+                // remover objetos do fim enquanto não for possível inserir
                 this.remover();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
+        // inserir objeto no fim e atualizar posição final
         fila[last] = serie;
         last = (last + 1) % fila.length;
 
@@ -274,18 +284,34 @@ public class FilaSeries {
         MyIO.println(this.getAverage());
     }
 
+    /**
+     * Remove um objeto Series do início da fila.
+     * @param serie Objeto a inserir.
+     * @throws Exception
+     */
     public void remover() throws Exception {
         if (first == last) {
             throw new Exception("ERRO: fila vazia");
         }
 
+        // atualizar posição de início da fila
         first = (first + 1) % fila.length;
     }
 
+    /**
+     * Calcula a média do número de temporadas de todos os objetos atualmente
+     * presentes na fila.
+     * @return Média arredondada.
+     */
     public int getAverage() {
+        // pegar índice da primeira posição
         int i = first;
+
+        // definir contadores
         double sum = 0;
         double count = 0;
+
+        // passar por toda a fila
         while (i != last) {
             sum += (double) fila[i].getNumeroTemporadas();
             count += 1.0;
@@ -303,9 +329,10 @@ public class FilaSeries {
         FilaSeries fila = new FilaSeries();
         int commands;
 
-        // ler nome do arquivo a ler
+        // ler nome do arquivo
         String line = MyIO.readLine();
 
+        // criar e inserir objetos na fila
         while (!line.equals("FIM")) {
             Series serie = new Series();
             try {
@@ -324,12 +351,15 @@ public class FilaSeries {
             line = MyIO.readLine();
         }
 
+        // ler total de comandos
         commands = MyIO.readInt();
 
+        // repetir para o total de comandos
         for (int i = 0; i < commands; i++) {
             line = MyIO.readLine();
             char cmd = line.charAt(0);
 
+            // criar e inserir objeto na fila
             if (cmd == 'I') {
                 Series serie = new Series();
                 try {
@@ -339,6 +369,7 @@ public class FilaSeries {
                 }
                     fila.inserir(serie);
 
+            // remover objeto da fila
             } else if (cmd == 'R') {
                 try {
                     fila.remover();

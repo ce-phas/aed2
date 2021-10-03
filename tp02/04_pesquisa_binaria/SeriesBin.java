@@ -1,6 +1,11 @@
 import java.io.*;
 import java.util.*;
-import java.time.*;
+
+/**
+ * @author Pedro H. Amorim Sá
+ * @version 1.0
+ * @since 2021-10-02
+ */
 
 public class SeriesBin {
     // definir variável de contagem
@@ -226,13 +231,17 @@ public class SeriesBin {
 
     public String parseTitle(String fileName) {
         String title = "";
+
+        // remover 5 posições do fim referentes à extensão 'html'
         int n = fileName.length() - 5;
 
         for (int i = 0; i < n; i++)
         {
             if (fileName.charAt(i) == '_') {
+                // substituir underscore por espaço
                 title += ' ';
             } else {
+                // concatenar demais caracteres à nova string
                 title += fileName.charAt(i);
             }
         }
@@ -241,14 +250,26 @@ public class SeriesBin {
 
     /* Pesquisa */
 
+    /**
+     * Método de pesquisa binária para uma lista de objetos SeriesBin.
+     * @param seriesList Lista de objetos SeriesBin.
+     * @param term Termo procurado dentre os nomes das séries.
+     * @return true, se encontrado; false, caso contrário.
+     */
     public static boolean search(List<SeriesBin> seriesList, String term) {
+        // definir posições de busca
         int lpos = 0;
         int rpos = seriesList.size();
         int mpos;
+
+
         boolean found = false;
 
         while (lpos <= rpos) {
+            // definir posição do meio
             mpos = (rpos + lpos) / 2;
+
+            // guardar elemento do meio
             String elem = seriesList.get(mpos).getNome();
 
             if (term.equals(elem)) {
@@ -256,9 +277,11 @@ public class SeriesBin {
                 found = true;
                 lpos = rpos + 1;
             } else if (term.compareTo(elem) > 0) {
+                // ir para a metade à direita se o termo for maior que o elemento
                 cmpCount++;
                 lpos = mpos + 1;
             } else {
+                // ir para a metade à esquerda se o termo for menor que o elemento
                 rpos = mpos - 1;
             }
             MyIO.println();
@@ -269,6 +292,12 @@ public class SeriesBin {
 
     /* Arquivo log */
 
+    /**
+     * Método para criar um arquivo de log com matrícula, tempo de execução do
+     * algoritmo de busca utilizado e total de comparações.
+     * @param t Tempo de execução em segundos.
+     * @throws Exception
+     */
     public static void logFile(double t) throws Exception {
         FileWriter fw = new FileWriter("742626_binaria.txt");
         BufferedWriter writer = new BufferedWriter(fw);
@@ -283,15 +312,18 @@ public class SeriesBin {
         // definir charset
         MyIO.setCharset("UTF-8");
 
-        // definir dados
+        // definir dados para contagem de tempo de execução
         double start;
         double end;
         double runtime;
+
+        // instanciar lista de objetos
         List<SeriesBin> series = new ArrayList<SeriesBin>();
 
-        // ler nome do arquivo a ler
+        // ler nome do arquivo
         String line = MyIO.readLine();
 
+        // criar objetos e inserir na lista
         while (!line.equals("FIM")) {
             SeriesBin serie = new SeriesBin();
             series.add(serie);
@@ -300,10 +332,13 @@ public class SeriesBin {
             // ler novo nome de arquivo
             line = MyIO.readLine();
         }
-        
+
         line = MyIO.readLine();
 
+        // iniciar contagem de tempo
         start = new Date().getTime();
+
+        // ler termos de pesquisa e buscar
         while (!line.equals("FIM")) {
             if (search(series, line)) {
                 MyIO.println("SIM");
@@ -314,17 +349,17 @@ public class SeriesBin {
             line = MyIO.readLine();
         }
 
+        // encerrar contagem de tempo
         end = new Date().getTime();
+
+        // calcular tempo de execução em segundos
         runtime = (end - start) / 1000.0;
 
+        // registrar em arquivo log
         try {
             logFile(runtime);
         } catch (Exception e) {
             MyIO.println("Erro ao criar arquivo de log");
         }
-
-        /*(for (int i = 0; i < series.size(); i++) {
-            MyIO.print(series.get(i).getNome()+",");
-        }*/
     }
 }

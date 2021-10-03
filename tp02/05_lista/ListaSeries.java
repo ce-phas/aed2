@@ -248,92 +248,142 @@ class Series {
 }
 
 public class ListaSeries {
+    // declarar arranjo e tamanho
     private Series lista[];
     private int size;
 
+    // construtor-padrão
     public ListaSeries() {
         lista = new Series[100];
         size = 0;
     }
 
+    /**
+     * Insere um objeto Series no início da lista.
+     * @param serie Objeto a inserir.
+     * @throws Exception
+     */
     public void inserirInicio(Series serie) throws Exception {
         if (size >= lista.length) {
             throw new Exception("ERRO: tamanho excedido");
         }
 
         for (int i = size; i > 0; i--) {
+            // clonar objeto da posição anterior e copiar para a nova
             Series temp = lista[i-1].clone();
             lista[i] = temp;
         }
 
+        // inserir objeto no início e incrementar tamanho da lista
         lista[0] = serie;
         size++;
     }
 
+
+    /**
+     * Insere um objeto Series no fim da lista.
+     * @param serie Objeto a inserir.
+     * @throws Exception
+     */
     public void inserirFim(Series serie) throws Exception {
         if (size >= lista.length) {
             throw new Exception("ERRO: tamanho excedido");
         }
 
+        // inserir objeto no fim e incrementar tamanho da lista
         lista[size] = serie;
         size++;
     }
 
+    /**
+     * Insere um objeto Series na lista em um índice específico.
+     * @param serie Objeto a inserir.
+     * @param index Posição para inserir.
+     * @throws Exception
+     */
     public void inserir(Series serie, int index) throws Exception {
+        // verificar se tamanho e índice são válidos
         if (size >= lista.length || index < 0 || index > size) {
             throw new Exception("ERRO: tamanho excedido");
         }
 
+        // deslocar objetos para o final, a partir da posição informada
         for (int i = size; i > index; i--) {
             Series temp = lista[i-1].clone();
             lista[i] = temp;
         }
 
+        // inserir objeto na posição e incrementar tamanho da lista
         lista[index] = serie;
         size++;
     }
 
+    /**
+     * Remove um objeto do início da lista.
+     * @throws Exception
+     */
     public void removerInicio() throws Exception {
         if (size == 0) {
             throw new Exception("ERRO: lista vazia");
         }
 
+        // guardar objeto removido e decrementar tamanho
         Series removed = lista[0].clone();
         size--;
 
+        // deslocar objetos restantes para o início da lista
         for (int i = 0; i < size; i++) {
             Series temp = lista[i+1].clone();
             lista[i] = temp;
         }
 
+        // mostrar atributo 'Nome' do objeto removido
         MyIO.println("(R) " + removed.getNome());
     }
 
+    /**
+     * Remove um objeto do fim da lista.
+     * @throws Exception
+     */
     public void removerFim() throws Exception {
         if (size == 0) {
             throw new Exception("ERRO: lista vazia");
         }
 
+        // guardar objeto removido e decrementar tamanho
         Series removed = lista[--size].clone();
+
+        // mostrar atributo 'Nome' do objeto removido
         MyIO.println("(R) " + removed.getNome());
     }
 
+    /**
+     * Remove um objeto da lista de um índice específico.
+     * @throws Exception
+     */
     public void remover(int index) throws Exception {
+        // verificar se tamanho e índice são válidos
         if (size == 0 || index < 0 || index >= size) {
             throw new Exception("ERRO: lista vazia ou posição inválida");
         }
 
+        // guardar objeto removido e decrementar tamanho
         Series removed = lista[index].clone();
         size--;
 
+        // deslocar para a esquerda os objetos à direita da posição
         for (int i = index; i < size; i++) {
             Series temp = lista[i+1].clone();
             lista[i] = temp;
         }
 
+        // mostrar atributo 'Nome' do objeto removido
         MyIO.println("(R) " + removed.getNome());
     }
 
+    /**
+     * Mostra todos os atributos de cada objeto da lista.
+     */
     public void mostrar() {
         for (int i = 0; i < size; i++) {
             lista[i].imprimir();
@@ -348,9 +398,10 @@ public class ListaSeries {
         ListaSeries lista = new ListaSeries();
         int commands;
 
-        // ler nome do arquivo a ler
+        // ler nome do arquivo
         String line = MyIO.readLine();
 
+        // criar e inserir objetos na lista
         while (!line.equals("FIM")) {
             Series serie = new Series();
             try {
@@ -369,12 +420,15 @@ public class ListaSeries {
             line = MyIO.readLine();
         }
 
+        // ler número de comandos para manipular a lista
         commands = MyIO.readInt();
 
+        // repetir para o total de comandos
         for (int i = 0; i < commands; i++) {
             line = MyIO.readLine();
             String cmd = line.substring(0, 2);
 
+            // inserir no início
             if (cmd.equals("II")) {
                 Series serie = new Series();
                 try {
@@ -388,6 +442,8 @@ public class ListaSeries {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+            // inserir no fim
             } else if (cmd.equals("IF")) {
                 Series serie = new Series();
                 try {
@@ -401,6 +457,8 @@ public class ListaSeries {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+            // inserir na posição informada
             } else if (cmd.equals("I*")) {
                 Series serie = new Series();
                 int index = Integer.parseInt(line.substring(3,5));
@@ -415,18 +473,24 @@ public class ListaSeries {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+            // remover no início
             } else if (cmd.equals("RI")) {
                 try {
                     lista.removerInicio();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+            // remover no fim
             } else if (cmd.equals("RF")) {
                 try {
                     lista.removerFim();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+            // remover na posição informada
             } else if (cmd.equals("R*")) {
                 int index = Integer.parseInt(line.substring(3,5));
 
@@ -438,6 +502,7 @@ public class ListaSeries {
             }
         }
 
+        // toString() de todos os objetos da lista
         lista.mostrar();
     }
 }

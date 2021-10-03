@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.*;
 
 /**
  * @author Pedro H. Amorim Sá

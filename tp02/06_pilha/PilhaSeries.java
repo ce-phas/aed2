@@ -2,7 +2,7 @@ import java.io.*;
 
 /**
  * @author Pedro H. Amorim Sá
- * @version 1.0
+ * @version 1.1
  * @since 2021-10-02
  */
 

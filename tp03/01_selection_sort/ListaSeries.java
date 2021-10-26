@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 
 /**
  * @author Pedro H. Amorim Sá
@@ -6,8 +7,8 @@ import java.io.*;
  * @since 2021-10-24
  */
 
-class Series {
 
+class Series {
     // definir atributos
     private String nome;
     private String formato;
@@ -22,19 +23,22 @@ class Series {
 
     /* Construtores */
 
+    /**
+     * Construtor-padrão
+     */
     Series() {}
 
     /**
      * Construtor que recebe parametros para todos os atributos do objeto.
-     * @param nome Titulo da serie.
-     * @param formato Descricao do formato da serie.
-     * @param duracao Descricao do tempo de duracao da serie.
-     * @param paisDeOrigem Pais de origem da serie.
-     * @param idiomaOriginal Idioma original da serie.
-     * @param emissoraDeTelevisao Emissora de televisao da serie.
-     * @param transmissaoOriginal Periodo de transmissao original da serie.
-     * @param numeroTemporadas Total de temporadas da serie.
-     * @param numeroEpisodios Total de episodios da serie.
+     * @param nome Titulo da série.
+     * @param formato Descrição do formato da série.
+     * @param duracao Descrição do tempo de duracao da série.
+     * @param paisDeOrigem País de origem da série.
+     * @param idiomaOriginal Idioma original da série.
+     * @param emissoraDeTelevisao Emissora de televisao da série.
+     * @param transmissaoOriginal Periodo de transmissão original da série.
+     * @param numeroTemporadas Total de temporadas da série.
+     * @param numeroEpisodios Total de episodios da série.
      */
     Series(
         String nome, String formato, String duracao, String paisDeOrigem,
@@ -151,10 +155,10 @@ class Series {
     }
 
 
-    /* Entrada e saida */
+    /* Entrada e saída */
 
     /**
-     * Mostra na tela os valores de cada atributo, separados por espaco.
+     * Mostra na tela os valores de cada atributo, separados por espaço.
     */
     public void imprimir() {
         String strSerie = (
@@ -170,7 +174,7 @@ class Series {
 
 
     /**
-     * Le de um arquivo HTML as linhas contendo os valores que serao designados
+     * Lê de um arquivo HTML as linhas contendo os valores que serão designados
      * a cada atributo.
      * @param path Caminho do arquivo no SO.
      * @throws Exception
@@ -219,15 +223,16 @@ class Series {
         br.close();
     }
 
-    /* Metodos auxiliares */
+
+    /* Métodos auxiliares */
 
     public String parseHtml(String line) {
-        // limpar tags e referencias de caracteres html com regex
+        // limpar tags e referências de caracteres html com regex
         return line.replaceAll("(<[^>]*>)|(&.*?;)", "");
     }
 
     public int parseHtmlInt(String line) {
-        // limpar tags e referencias de caracteres html com regex
+        // limpar tags e referências de caracteres html com regex
         return Integer.parseInt(line.replaceAll("(<[^>]*>)|(\\d+)|(.*)", "$2"));
     }
 
@@ -247,15 +252,24 @@ class Series {
     }
 }
 
+
+/* Classe de estrutura de dados */
+
 public class ListaSeries {
     // declarar arranjo e tamanho
     private Series lista[];
     private int size;
 
+    // definir variáveis de contagem
+    private int cmpCount;
+    private int swpCount;
+
     // construtor-padrão
     public ListaSeries() {
         lista = new Series[100];
         size = 0;
+        cmpCount = 0;
+        swpCount = 0;
     }
 
     /**
@@ -295,6 +309,7 @@ public class ListaSeries {
         size++;
     }
 
+
     /**
      * Insere um objeto Series na lista em um índice específico.
      * @param serie Objeto a inserir.
@@ -317,6 +332,7 @@ public class ListaSeries {
         lista[index] = serie;
         size++;
     }
+
 
     /**
      * Remove um objeto do início da lista.
@@ -341,6 +357,7 @@ public class ListaSeries {
         MyIO.println("(R) " + removed.getNome());
     }
 
+
     /**
      * Remove um objeto do fim da lista.
      * @throws Exception
@@ -356,6 +373,7 @@ public class ListaSeries {
         // mostrar atributo 'Nome' do objeto removido
         MyIO.println("(R) " + removed.getNome());
     }
+
 
     /**
      * Remove um objeto da lista de um índice específico.
@@ -381,13 +399,28 @@ public class ListaSeries {
         MyIO.println("(R) " + removed.getNome());
     }
 
+
+    /**
+     * Método para trocar dois elementos de posição em uma lista.
+     * @param i Índice do primeiro elemento.
+     * @param j Índice do segundo elemento.
+     */
     public void swap(int i, int j) {
         Series tmp = lista[i];
         lista[i] = lista[j];
         lista[j] = tmp;
     }
 
+
+    /**
+     * Método para ordenação de lista baseado no algoritmo de ordenação por
+     * seleção.
+     */
     public void sort() {
+        // reiniciar contadores, se aplicável
+        if (cmpCount != 0) this.cmpCount = 0;
+        if (swpCount != 0) this.swpCount = 0;
+
         if (size > 1) {
             for (int i = 0; i < (size - 1); i++) {
                 int menor = i;
@@ -396,16 +429,33 @@ public class ListaSeries {
                     String s2 = lista[j].getPaisDeOrigem().trim();
                     String t1 = lista[menor].getNome();
                     String t2 = lista[j].getNome();
-                    if (s1.compareTo(s2) > 0
-                        || (s1.compareTo(s2) == 0 && t1.compareTo(t2) > 0)) {
+
+                    // contar comparação
+                    cmpCount++;
+                    int cmpElements = s1.compareTo(s2);
+
+                    if (cmpElements > 0) {
                         menor = j;
+                    } else if (cmpElements == 0) {
+                        // contar comparação dos nomes abaixo
+                        cmpCount++;
+
+                        // se elementos forem iguais, ordenar pelo nome da série
+                        if (t1.compareTo(t2) > 0) {
+                            menor = j;
+                        }
                     }
                 }
 
-                swap(menor, i);
+                if (menor != i) {
+                    // contar movimentação e trocar
+                    swpCount++;
+                    swap(menor, i);
+                }
             }
         }
     }
+
 
     /**
      * Mostra todos os atributos de cada objeto da lista.
@@ -416,13 +466,37 @@ public class ListaSeries {
         }
     }
 
+
+    /* Arquivo log */
+
+    /**
+     * Método para criar um arquivo de log com matrícula, total de comparações,
+     * total de movimentações e tempo de execução, em segundos, do algoritmo de
+     * ordenação utilizado.
+     * @param t Tempo de execução em segundos.
+     * @throws Exception
+     */
+    public void logFile(double t) throws Exception {
+        FileWriter fw = new FileWriter("742626_sequencial.txt");
+        BufferedWriter writer = new BufferedWriter(fw);
+        writer.write("742626\t" + cmpCount + "\t" + swpCount + "\t" + t);
+        writer.close();
+    }
+
+
+    /* Main */
+
     public static void main(String[] args) {
         // definir charset
         MyIO.setCharset("UTF-8");
 
+        // definir dados para contagem de tempo de execução
+        double start;
+        double end;
+        double runtime;
+
         // definir dados
         ListaSeries lista = new ListaSeries();
-        int commands;
 
         // ler nome do arquivo
         String line = MyIO.readLine();
@@ -446,9 +520,24 @@ public class ListaSeries {
             line = MyIO.readLine();
         }
 
+        // iniciar contagem de tempo
+        start = new Date().getTime();
+
+        // realizar ordenação
         lista.sort();
+
+        // encerrar contagem de tempo e calcular tempo de execução
+        end = new Date().getTime();
+        runtime = (end - start) / 1000.0;
 
         // toString() de todos os objetos da lista
         lista.mostrar();
+
+        // registrar em arquivo log
+        try {
+            lista.logFile(runtime);
+        } catch (Exception e) {
+            MyIO.println("Erro ao criar arquivo de log");
+        }
     }
 }

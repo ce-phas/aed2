@@ -2,11 +2,11 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Lista de séries com ordenação por seleção.
- * 
+ * Lista de séries com ordenação por inserção.
+ *
  * @author Pedro H. Amorim Sá
- * @version 1.1
- * @since 2021-10-24
+ * @version 1.0
+ * @since 2021-10-28
  */
 
 
@@ -402,16 +402,22 @@ public class ListaSeries {
     }
 
 
-    /**
-     * Método para trocar dois elementos de posição em uma lista.
-     * @param i Índice do primeiro elemento.
-     * @param j Índice do segundo elemento.
-     */
-    public void swap(int i, int j) {
-        Series tmp = lista[i];
-        lista[i] = lista[j];
-        lista[j] = tmp;
+    public void sortName() {
+        for (int i = 0; i < size; i++) {
+            Series tmp = lista[i];
+            int j = i - 1;
+
+            cmpCount++;
+            while ((j >= 0) && (lista[j].getNome().trim().compareTo(
+                                tmp.getNome().trim()) > 0)) {
+                    lista[j + 1] = lista[j];
+                j--;
+            }
+
+            lista[j + 1] = tmp;
+        }
     }
+
 
 
     /**
@@ -423,38 +429,22 @@ public class ListaSeries {
         if (cmpCount != 0) this.cmpCount = 0;
         if (swpCount != 0) this.swpCount = 0;
 
-        if (size > 1) {
-            for (int i = 0; i < (size - 1); i++) {
-                int menor = i;
-                for (int j = (i + 1); j < size; j++) {
-                    String s1 = lista[menor].getPaisDeOrigem().trim();
-                    String s2 = lista[j].getPaisDeOrigem().trim();
-                    String t1 = lista[menor].getNome();
-                    String t2 = lista[j].getNome();
+        this.sortName();
 
-                    // contar comparação
-                    cmpCount++;
-                    int cmpElements = s1.compareTo(s2);
+        for (int i = 0; i < size; i++) {
+            Series tmp = lista[i];
+            int j = i - 1;
 
-                    if (cmpElements > 0) {
-                        menor = j;
-                    } else if (cmpElements == 0) {
-                        // contar comparação dos nomes abaixo
-                        cmpCount++;
-
-                        // se elementos forem iguais, ordenar pelo nome da série
-                        if (t1.compareTo(t2) > 0) {
-                            menor = j;
-                        }
-                    }
-                }
-
-                if (menor != i) {
-                    // contar movimentação e trocar
-                    swpCount++;
-                    swap(menor, i);
-                }
+            cmpCount++;
+            while ((j >= 0) && (lista[j].getIdiomaOriginal().trim().compareTo(
+                                tmp.getIdiomaOriginal().trim()) > 0)) {
+                    lista[j + 1] = lista[j];
+                j--;
+                cmpCount++;
+                swpCount++;
             }
+
+            lista[j + 1] = tmp;
         }
     }
 
@@ -479,7 +469,7 @@ public class ListaSeries {
      * @throws Exception
      */
     public void logFile(double t) throws Exception {
-        FileWriter fw = new FileWriter("742626_sequencial.txt");
+        FileWriter fw = new FileWriter("742626_insercao.txt");
         BufferedWriter writer = new BufferedWriter(fw);
         writer.write("742626\t" + cmpCount + "\t" + swpCount + "\t" + t);
         writer.close();

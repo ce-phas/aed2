@@ -5,7 +5,7 @@ import java.util.*;
  * Lista de séries com ordenação por inserção.
  *
  * @author Pedro H. Amorim Sá
- * @version 1.0
+ * @version 1.1
  * @since 2021-10-28
  */
 
@@ -402,22 +402,44 @@ public class ListaSeries {
     }
 
 
-    public void sortName() {
-        for (int i = 0; i < size; i++) {
-            Series tmp = lista[i];
-            int j = i - 1;
-
-            cmpCount++;
-            while ((j >= 0) && (lista[j].getNome().trim().compareTo(
-                                tmp.getNome().trim()) > 0)) {
-                    lista[j + 1] = lista[j];
-                j--;
-            }
-
-            lista[j + 1] = tmp;
-        }
+    /**
+     * Método para trocar dois elementos de posição em uma lista.
+     * @param i Índice do primeiro elemento.
+     * @param j Índice do segundo elemento.
+     */
+    private void swap(int i, int j) {
+        Series tmp = lista[i];
+        lista[i] = lista[j];
+        lista[j] = tmp;
     }
 
+
+    /**
+     * Método para ordenação inicial da lista, com o nome da série como chave.
+     */
+    public void sortName() {
+        sortName(0, size - 1);
+    }
+
+    private void sortName(int l, int r) {
+        int i = l;
+        int j = r;
+        Series p = lista[(l + r) / 2];
+
+        while (i <= j) {
+            while (lista[i].getNome().compareTo(p.getNome()) < 0) i++;
+            while (lista[j].getNome().compareTo(p.getNome()) > 0) j--;
+
+            if (i <= j) {
+                swap(i, j);
+                i++;
+                j--;
+            }
+        }
+
+        if (l < j) sortName(l, j);
+        if (i < r) sortName(i, r);
+    }
 
 
     /**
@@ -428,8 +450,6 @@ public class ListaSeries {
         // reiniciar contadores, se aplicável
         if (cmpCount != 0) this.cmpCount = 0;
         if (swpCount != 0) this.swpCount = 0;
-
-        this.sortName();
 
         for (int i = 0; i < size; i++) {
             Series tmp = lista[i];
@@ -511,6 +531,9 @@ public class ListaSeries {
 
             line = MyIO.readLine();
         }
+
+        // ordenação inicial por nome
+        lista.sortName();
 
         // iniciar contagem de tempo
         start = new Date().getTime();

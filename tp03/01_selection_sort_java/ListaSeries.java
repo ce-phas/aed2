@@ -3,9 +3,9 @@ import java.util.*;
 
 /**
  * Lista de séries com ordenação por seleção.
- * 
+ *
  * @author Pedro H. Amorim Sá
- * @version 1.1
+ * @version 1.2
  * @since 2021-10-24
  */
 
@@ -439,9 +439,6 @@ public class ListaSeries {
                     if (cmpElements > 0) {
                         menor = j;
                     } else if (cmpElements == 0) {
-                        // contar comparação dos nomes abaixo
-                        cmpCount++;
-
                         // se elementos forem iguais, ordenar pelo nome da série
                         if (t1.compareTo(t2) > 0) {
                             menor = j;

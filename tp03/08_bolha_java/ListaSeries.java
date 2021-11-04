@@ -2,11 +2,11 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Lista de séries com ordenação por algoritmo quicksort.
+ * Lista de séries com ordenação por algoritmo bubble sort.
  *
  * @author Pedro H. Amorim Sá
- * @version 1.1
- * @since 2021-10-28
+ * @version 1.0
+ * @since 2021-11-03
  */
 
 
@@ -420,7 +420,7 @@ public class ListaSeries {
     /**
      * Método para ordenação de lista baseado no algoritmo bubble sort.
      */
-    private void sort() {
+    public void sort() {
         for (int i = (size - 1); i > 0; i--) {
             for (int j = 0; j < i; j++) {
                 int x = lista[j].getNumeroTemporadas();
@@ -498,9 +498,6 @@ public class ListaSeries {
 
             line = MyIO.readLine();
         }
-
-        // ordenação inicial por nome
-        //lista.sortName();
 
         // iniciar contagem de tempo
         start = new Date().getTime();

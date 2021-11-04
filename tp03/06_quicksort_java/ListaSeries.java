@@ -5,7 +5,7 @@ import java.util.*;
  * Lista de séries com ordenação por algoritmo quicksort.
  *
  * @author Pedro H. Amorim Sá
- * @version 1.1
+ * @version 1.0
  * @since 2021-10-28
  */
 
@@ -522,9 +522,6 @@ public class ListaSeries {
 
             line = MyIO.readLine();
         }
-
-        // ordenação inicial por nome
-        //lista.sortName();
 
         // iniciar contagem de tempo
         start = new Date().getTime();

@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Lista de séries com ordenação por inserção.
+ * Lista de séries com ordenação por algoritmo heapsort.
  *
  * @author Pedro H. Amorim Sá
  * @version 1.1
@@ -421,6 +421,7 @@ public class ListaSeries {
         sortName(0, size - 1);
     }
 
+
     private void sortName(int l, int r) {
         int i = l;
         int j = r;
@@ -442,29 +443,71 @@ public class ListaSeries {
     }
 
 
-    /**
-     * Método para ordenação de lista baseado no algoritmo de ordenação por
-     * inserção.
-     */
+    /* Heapsort */
+
+    private void construir(int n) {
+        for (int i = n; i > 1 && lista[i].getFormato().trim().compareTo(
+             lista[i/2].getFormato().trim()) > 0; i /= 2) {
+            swap(i, i/2);
+        }
+    }
+
+
+    private void reconstruir(int n) {
+        int i = 1;
+        while (i <= n / 2) {
+            int filho = getMaiorFilho(i, n);
+            if (lista[i].getFormato().trim().compareTo(
+                lista[filho].getFormato().trim()) < 0) {
+                swap(i, filho);
+                i = filho;
+            } else {
+                i = n;
+            }
+        }
+    }
+
+
+    private int getMaiorFilho(int i, int n) {
+        int filho;
+
+        if (2 * i == n || lista[2*i].getFormato().trim().compareTo(
+            lista[2*i+1].getFormato().trim()) > 0) {
+            filho = 2 * i;
+        } else {
+            filho = 2 * i + 1;
+        }
+
+        return filho;
+    }
+
+
     public void sort() {
-        // reiniciar contadores, se aplicável
-        if (cmpCount != 0) this.cmpCount = 0;
-        if (swpCount != 0) this.swpCount = 0;
+        Series[] tmp = new Series[101];
 
         for (int i = 0; i < size; i++) {
-            Series tmp = lista[i];
-            int j = i - 1;
+            tmp[i+1] = lista[i];
+        }
 
-            cmpCount++;
-            while ((j >= 0) && (lista[j].getIdiomaOriginal().trim().compareTo(
-                                tmp.getIdiomaOriginal().trim()) > 0)) {
-                    lista[j + 1] = lista[j];
-                j--;
-                cmpCount++;
-                swpCount++;
-            }
+        lista = tmp;
 
-            lista[j + 1] = tmp;
+        for (int heapSize = 2; heapSize <= size; heapSize++) {
+            this.construir(heapSize);
+        }
+
+        int heapSize = size;
+
+        while (heapSize > 1) {
+            swap(1, heapSize--);
+            reconstruir(heapSize);
+        }
+
+        tmp = lista;
+        lista = new Series[100];
+
+        for (int i = heapSize; lista[i].getFormato().trim().compareTo(
+             lista[i/2].getFormato().trim()) > 0; i /= 2) {
+            swap(i, i/2);
         }
     }
 
@@ -489,7 +532,7 @@ public class ListaSeries {
      * @throws Exception
      */
     public void logFile(double t) throws Exception {
-        FileWriter fw = new FileWriter("742626_insercao.txt");
+        FileWriter fw = new FileWriter("742626_heapsort.txt");
         BufferedWriter writer = new BufferedWriter(fw);
         writer.write("742626\t" + cmpCount + "\t" + swpCount + "\t" + t);
         writer.close();

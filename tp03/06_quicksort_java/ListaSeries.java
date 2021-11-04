@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Lista de séries com ordenação por inserção.
+ * Lista de séries com ordenação por algoritmo quicksort.
  *
  * @author Pedro H. Amorim Sá
  * @version 1.1
@@ -413,59 +413,50 @@ public class ListaSeries {
         lista[j] = tmp;
     }
 
-
     /**
-     * Método para ordenação inicial da lista, com o nome da série como chave.
+     * Método para ordenação de lista baseado no algoritmo quicksort.
      */
-    public void sortName() {
-        sortName(0, size - 1);
+    public void sort() {
+        sort(0, size - 1);
     }
 
-    private void sortName(int l, int r) {
+    private void sort(int l, int r) {
         int i = l;
         int j = r;
         Series p = lista[(l + r) / 2];
 
         while (i <= j) {
-            while (lista[i].getNome().compareTo(p.getNome()) < 0) i++;
-            while (lista[j].getNome().compareTo(p.getNome()) > 0) j--;
+            int cmpPaisL = lista[i].getPaisDeOrigem().trim().compareTo(p.getPaisDeOrigem().trim());
+            int cmpPaisR = lista[j].getPaisDeOrigem().trim().compareTo(p.getPaisDeOrigem().trim());
+            int cmpNomeL = lista[i].getNome().compareTo(p.getNome());
+            int cmpNomeR = lista[j].getNome().compareTo(p.getNome());
+
+            cmpCount++;
+            while (cmpPaisL < 0 || (cmpPaisL == 0 && cmpNomeL < 0)) {
+                i++;
+                cmpPaisL = lista[i].getPaisDeOrigem().trim().compareTo(p.getPaisDeOrigem().trim());
+                cmpNomeL = lista[i].getNome().compareTo(p.getNome());
+                cmpCount++;
+            }
+
+            cmpCount++;
+            while (cmpPaisR > 0 || (cmpPaisR == 0 && cmpNomeR > 0)) {
+                j--;
+                cmpPaisR = lista[j].getPaisDeOrigem().trim().compareTo(p.getPaisDeOrigem().trim());
+                cmpNomeR = lista[j].getNome().compareTo(p.getNome());
+                cmpCount++;
+            }
 
             if (i <= j) {
                 swap(i, j);
+                swpCount++;
                 i++;
                 j--;
             }
         }
 
-        if (l < j) sortName(l, j);
-        if (i < r) sortName(i, r);
-    }
-
-
-    /**
-     * Método para ordenação de lista baseado no algoritmo de ordenação por
-     * inserção.
-     */
-    public void sort() {
-        // reiniciar contadores, se aplicável
-        if (cmpCount != 0) this.cmpCount = 0;
-        if (swpCount != 0) this.swpCount = 0;
-
-        for (int i = 0; i < size; i++) {
-            Series tmp = lista[i];
-            int j = i - 1;
-
-            cmpCount++;
-            while ((j >= 0) && (lista[j].getIdiomaOriginal().trim().compareTo(
-                                tmp.getIdiomaOriginal().trim()) > 0)) {
-                    lista[j + 1] = lista[j];
-                j--;
-                cmpCount++;
-                swpCount++;
-            }
-
-            lista[j + 1] = tmp;
-        }
+        if (l < j) sort(l, j);
+        if (i < r) sort(i, r);
     }
 
 
@@ -489,7 +480,7 @@ public class ListaSeries {
      * @throws Exception
      */
     public void logFile(double t) throws Exception {
-        FileWriter fw = new FileWriter("742626_insercao.txt");
+        FileWriter fw = new FileWriter("742626_quicksort.txt");
         BufferedWriter writer = new BufferedWriter(fw);
         writer.write("742626\t" + cmpCount + "\t" + swpCount + "\t" + t);
         writer.close();
@@ -533,7 +524,7 @@ public class ListaSeries {
         }
 
         // ordenação inicial por nome
-        lista.sortName();
+        //lista.sortName();
 
         // iniciar contagem de tempo
         start = new Date().getTime();

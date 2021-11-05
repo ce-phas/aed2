@@ -408,8 +408,8 @@ public class ListaSeries {
      * @param j Índice do segundo elemento.
      */
     private void swap(int i, int j) {
-        Series tmp = lista[i];
-        lista[i] = lista[j];
+        Series tmp = lista[i].clone();
+        lista[i] = lista[j].clone();
         lista[j] = tmp;
     }
 

@@ -317,34 +317,71 @@ int getMaior() {
     int maior = array[0].num_temporadas;
 
     for (int i = 1; i < n; i++) {
-        if (array[maior].num_temporadas < array[i].num_temporadas
-            || (array[maior].num_temporadas == array[i].num_temporadas
-            && strcmp(array[maior].nome, array[i].nome) > 0)) {
-        
-            maior = i;
+        if (array[maior].num_temporadas < array[i].num_temporadas) {
+            maior = array[i].num_temporadas;
         }
     }
 
     return maior;
 }
 
+void swap(Serie* i, Serie* j) {
+    Serie tmp = *i;
+    *i = *j;
+    *j = tmp;
+}
+
+void sortNome(int l, int r) {
+    int i = l;
+    int j = r;
+    Serie p = array[(l + r) / 2];
+
+    while (i <= j) {
+        while (strcmp(array[i].nome, p.nome) < 0) i++;
+        while (strcmp(array[j].nome, p.nome) > 0) j--;
+
+        if (i <= j) {
+            swap(&array[i], &array[j]);
+            i++;
+            j--;
+        }
+    }
+
+    if (l < j) sortNome(l, j);
+    if (i < r) sortNome(i, r);
+}
+
 void countingsort() {
     // criar arranjo para contagem de ocorrências de cada elemento
     int countSize = getMaior() + 1;
     int count[countSize];
-    Serie ordenado[100];
+    Serie ordenado[n];
+
+    // ordenar primeiramente por nome
+    sortNome(0, n - 1);
 
     // inicializar posições do arranjo
-    for (int i = 0; i < countSize; i++) count[i] = 0;
+    for (int i = 0; i < countSize; i++) {
+        count[i] = 0;
+        cmpCount++;
+    }
 
     // contar elementos
-    for (int i = 0; i < n; i++) count[array[i].num_temporadas]++;
-    for (int i = 1; i < countSize; i ++) count[i] += count[i - 1];
+    for (int i = 0; i < n; i++) {
+        count[array[i].num_temporadas]++;
+        cmpCount++;
+    }
+
+    for (int i = 1; i < countSize; i ++) {
+        count[i] += count[i - 1];
+        cmpCount++;
+    }
 
     // ordenar
     for (int i = n - 1; i >= 0; i--) {
         ordenado[count[array[i].num_temporadas] - 1] = array[i];
         count[array[i].num_temporadas]--;
+        swpCount++;
     }
 
     // copiar para arranjo original

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_FIELD_SIZE 100
 #define MAX_LINE_SIZE 250
@@ -204,27 +205,46 @@ CelulaDupla* getCel(int pos) {
     return cel;
 }
 
+char *ltrim(char *s)
+{
+    while(isspace(*s)) s++;
+    return s;
+}
+
+char *rtrim(char *s)
+{
+    char* back = s + strlen(s);
+    while(isspace(*--back));
+    *(back+1) = '\0';
+    return s;
+}
+
+char *trim(char *s)
+{
+    return rtrim(ltrim(s)); 
+}
+
 void quicksort(int l, int r) {
     int i = l;
     int j = r;
     Serie p = getCel((l + r) / 2)->elemento;
 
     while (i <= j) {
-        char *s1 = getCel(i)->elemento.pais;
-        char *s2 = getCel(j)->elemento.pais;
-        char *t1 = getCel(i)->elemento.nome;
-        char *t2 = getCel(j)->elemento.nome;
+        char *s1 = trim(getCel(i)->elemento.pais);
+        char *s2 = trim(getCel(j)->elemento.pais);
+        char *t1 = trim(getCel(i)->elemento.nome);
+        char *t2 = trim(getCel(j)->elemento.nome);
 
         while (strcmp(s1, p.pais) < 0 || (strcmp(s1, p.pais) == 0 && strcmp(t1, p.nome) < 0)) {
             i++;
-            s1 = getCel(i)->elemento.pais;
-            t1 = getCel(i)->elemento.nome;
+            s1 = trim(getCel(i)->elemento.pais);
+            t1 = trim(getCel(i)->elemento.nome);
         }
 
         while (strcmp(s2, p.pais) > 0 || (strcmp(s2, p.pais) == 0 && strcmp(t2, p.nome) > 0)) {
             j--;
-            s2 = getCel(j)->elemento.pais;
-            t2 = getCel(j)->elemento.nome;
+            s2 = trim(getCel(j)->elemento.pais);
+            t2 = trim(getCel(j)->elemento.nome);
         }
 
         if (i <= j) {

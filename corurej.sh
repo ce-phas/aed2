@@ -15,7 +15,7 @@
 PUBIN=pub.in
 PUBOUT=pub.out
 USAGE="Utilizacao: $0 <nome da classe> <nome da saida>"
-SUCCESS="SUCESSO: saida correta!"
+SUCCESS="SUCESSO: saída correta!"
 
 if [ "$#" -lt "2" ]; then
     echo -e $USAGE;

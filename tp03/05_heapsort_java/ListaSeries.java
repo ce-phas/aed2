@@ -407,72 +407,23 @@ public class ListaSeries {
      * @param i Índice do primeiro elemento.
      * @param j Índice do segundo elemento.
      */
-    private void swap(int i, int j) {
-        Series tmp = lista[i].clone();
-        lista[i] = lista[j].clone();
-        lista[j] = tmp;
+    private void swap(Series[] arr, int i, int j) {
+        Series tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
     }
-
-
-    /**
-     * Método para ordenação inicial da lista, com o nome da série como chave.
-     */
-    public void sortName() {
-        sortName(0, size - 1);
-    }
-
-
-    private void sortName(int l, int r) {
-        int i = l;
-        int j = r;
-        Series p = lista[(l + r) / 2];
-
-        while (i <= j) {
-            while (lista[i].getNome().compareTo(p.getNome()) < 0) i++;
-            while (lista[j].getNome().compareTo(p.getNome()) > 0) j--;
-
-            if (i <= j) {
-                swap(i, j);
-                i++;
-                j--;
-            }
-        }
-
-        if (l < j) sortName(l, j);
-        if (i < r) sortName(i, r);
-    }
-
 
     /* Heapsort */
-
-    private void construir(int n) {
-        for (int i = n; i > 1 && lista[i].getFormato().trim().compareTo(
-             lista[i/2].getFormato().trim()) > 0; i /= 2) {
-            swap(i, i/2);
-        }
-    }
-
-
-    private void reconstruir(int n) {
-        int i = 1;
-        while (i <= n / 2) {
-            int filho = getMaiorFilho(i, n);
-            if (lista[i].getFormato().trim().compareTo(
-                lista[filho].getFormato().trim()) < 0) {
-                swap(i, filho);
-                i = filho;
-            } else {
-                i = n;
-            }
-        }
-    }
-
-
-    private int getMaiorFilho(int i, int n) {
+    public int getMaiorFilho(int i, int tamHeap) {
         int filho;
 
-        if (2 * i == n || lista[2*i].getFormato().trim().compareTo(
-            lista[2*i+1].getFormato().trim()) > 0) {
+        if (2 * i == tamHeap || (lista[2*i].getFormato().trim().compareTo(
+            lista[2*i+1].getFormato().trim()) > 0 ||
+            (lista[2*i].getFormato().trim().compareTo(
+             lista[2*i+1].getFormato().trim()) == 0 &&
+             lista[2*i].getNome().compareTo(
+             lista[2*i+1].getNome()) > 0))) {
+
             filho = 2 * i;
         } else {
             filho = 2 * i + 1;
@@ -480,34 +431,62 @@ public class ListaSeries {
 
         return filho;
     }
+    public void construir(int tamHeap) {
+        for (int i = tamHeap; i > 1 && (lista[i].getFormato().trim().compareTo(
+             lista[i/2].getFormato().trim()) > 0 ||
+             (lista[i].getFormato().trim().compareTo(
+              lista[i/2].getFormato().trim()) == 0 &&
+              lista[i].getNome().compareTo(
+              lista[i/2].getNome()) > 0)); i /= 2) {
+            swap(lista, i, i/2);
+        }
+    }
 
+    public void reconstruir(int tamHeap) {
+        int i = 1;
+        while (i <= (tamHeap / 2)) {
+            int filho = getMaiorFilho(i, tamHeap);
+            if (lista[i].getFormato().trim().compareTo(
+                lista[filho].getFormato().trim()) < 0 ||
+                (lista[i].getFormato().trim().compareTo(
+                 lista[filho].getFormato().trim()) == 0 &&
+                 lista[i].getNome().compareTo(
+                 lista[filho].getNome()) < 0)) {
+                swap(lista, i, filho);
+                i = filho;
+            } else {
+                i = tamHeap;
+            }
+        }
+    }
 
-    public void sort() {
-        Series[] tmp = new Series[101];
+    public void heapsort() {
+        Series[] tmp = new Series[size + 1];
 
         for (int i = 0; i < size; i++) {
-            tmp[i+1] = lista[i];
+            tmp[i+1] = lista[i].clone();
         }
 
         lista = tmp;
 
-        for (int heapSize = 2; heapSize <= size; heapSize++) {
-            this.construir(heapSize);
+        // construção do heap
+        for (int tamHeap = 2; tamHeap <= size; tamHeap++) {
+            construir(tamHeap);
         }
 
-        int heapSize = size;
-
-        while (heapSize > 1) {
-            swap(1, heapSize--);
-            reconstruir(heapSize);
+        // ordenação
+        int tamHeap = size;
+        while (tamHeap > 1) {
+            swap(lista, 1, tamHeap--);
+            reconstruir(tamHeap);
         }
 
+        // voltar lista para posição zero
         tmp = lista;
-        lista = new Series[100];
+        lista = new Series[size];
 
-        for (int i = heapSize; lista[i].getFormato().trim().compareTo(
-             lista[i/2].getFormato().trim()) > 0; i /= 2) {
-            swap(i, i/2);
+        for (int i = 0; i < size; i++) {
+            lista[i] = tmp[i + 1];
         }
     }
 
@@ -575,14 +554,11 @@ public class ListaSeries {
             line = MyIO.readLine();
         }
 
-        // ordenação inicial por nome
-        lista.sortName();
-
         // iniciar contagem de tempo
         start = new Date().getTime();
 
         // realizar ordenação
-        lista.sort();
+        lista.heapsort();
 
         // encerrar contagem de tempo e calcular tempo de execução
         end = new Date().getTime();

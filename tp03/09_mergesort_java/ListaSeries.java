@@ -401,23 +401,6 @@ public class ListaSeries {
         MyIO.println("(R) " + removed.getNome());
     }
 
-
-    /**
-     * Método para ordenação de lista baseado no algoritmo bubble sort.
-     */
-    public void sort() {
-        sort(0, size - 1);
-    }
-
-    private void sort(int esq, int dir) {
-        if (esq < dir) {
-            int meio = (esq + dir) / 2;
-            sort(esq, meio);
-            sort(meio + 1, dir);
-            intercalar(esq, meio, dir);
-        }
-    }
-
     private void intercalar(int esq, int meio, int dir) {
         int n1, n2, i, j, k;
 
@@ -441,11 +424,27 @@ public class ListaSeries {
         a1[i] = a2[j] = new Series();
 
         for (i = j = 0, k = esq; k <= dir; k++) {
-            lista[k] = (a1[i].getNumeroEpisodios() <= a2[j].getNumeroEpisodios()) ? a1[i++] : a2[j++];
+            if (a1[i].getNumeroEpisodios() <= a2[j].getNumeroEpisodios()) {
+                lista[k] = a1[i++];
+            } else {
+                lista[k] = a2[j++];
+            }
         }
 
     }
 
+    public void sort() {
+        sort(0, size - 1);
+    }
+
+    private void sort(int esq, int dir) {
+        if (esq < dir) {
+            int meio = (esq + dir) / 2;
+            sort(esq, meio);
+            sort(meio + 1, dir);
+            intercalar(esq, meio, dir);
+        }
+    }
 
     /**
      * Mostra todos os atributos de cada objeto da lista.

@@ -417,6 +417,7 @@ public class ListaSeries {
     public int getMaiorFilho(int i, int tamHeap) {
         int filho;
 
+        cmpCount++;
         if (2 * i == tamHeap || (lista[2*i].getFormato().trim().compareTo(
             lista[2*i+1].getFormato().trim()) > 0 ||
             (lista[2*i].getFormato().trim().compareTo(
@@ -432,6 +433,7 @@ public class ListaSeries {
         return filho;
     }
     public void construir(int tamHeap) {
+        cmpCount++;
         for (int i = tamHeap; i > 1 && (lista[i].getFormato().trim().compareTo(
              lista[i/2].getFormato().trim()) > 0 ||
              (lista[i].getFormato().trim().compareTo(
@@ -439,6 +441,8 @@ public class ListaSeries {
               lista[i].getNome().compareTo(
               lista[i/2].getNome()) > 0)); i /= 2) {
             swap(lista, i, i/2);
+            swpCount++;
+            cmpCount++;
         }
     }
 
@@ -446,6 +450,8 @@ public class ListaSeries {
         int i = 1;
         while (i <= (tamHeap / 2)) {
             int filho = getMaiorFilho(i, tamHeap);
+
+            cmpCount++;
             if (lista[i].getFormato().trim().compareTo(
                 lista[filho].getFormato().trim()) < 0 ||
                 (lista[i].getFormato().trim().compareTo(
@@ -454,6 +460,7 @@ public class ListaSeries {
                  lista[filho].getNome()) < 0)) {
                 swap(lista, i, filho);
                 i = filho;
+                swpCount++;
             } else {
                 i = tamHeap;
             }
@@ -479,6 +486,7 @@ public class ListaSeries {
         while (tamHeap > 1) {
             swap(lista, 1, tamHeap--);
             reconstruir(tamHeap);
+            swpCount++;
         }
 
         // voltar lista para posição zero

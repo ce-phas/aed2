@@ -243,7 +243,7 @@ class Series {
                 title += fileName.charAt(i);
             }
         }
-        return title;
+        return title.trim();
     }
 }
 
@@ -276,6 +276,7 @@ class ArvoreSeries {
     }
 
     public boolean pesquisar(String valor) {
+        System.out.print(" raiz ");
         return pesquisar(valor, raiz);
     }
 
@@ -284,14 +285,113 @@ class ArvoreSeries {
 
         if (i == null) {
             resp = false;
-
-        // comparar o valor procurado com o nome da série armazenada no nó atual
         } else if (valor.compareTo(i.elemento.getNome()) == 0) {
             resp = true;
         } else if (valor.compareTo(i.elemento.getNome()) < 0) {
+            System.out.print("esq ");
             resp = pesquisar(valor, i.esq);
         } else {
+            System.out.print("dir ");
             resp = pesquisar(valor, i.dir);
+        }
+        return resp;
+    }
+
+    public void inserir(Series serie) {
+        raiz = inserir(serie, raiz);
+    }
+
+    private No inserir(Series serie, No i) {
+        if (i == null) {
+            i = new No(serie);
+        } else if (serie.getNome().compareTo(i.elemento.getNome()) < 0) {
+            i.esq = inserir(serie, i.esq);
+        } else if (serie.getNome().compareTo(i.elemento.getNome()) > 0) {
+            i.dir = inserir(serie, i.dir);
+        } else {
+            // não fazer nada: chave já está na árvore
+        }
+        return i;
+    }
+
+    public void remover(String nome) {
+        raiz = remover(nome, raiz);
+    }
+
+    /**
+     * Metodo privado recursivo para remover elemento.
+     * @param x Elemento a ser removido.
+     * @param i No em analise.
+     * @return No em analise, alterado ou nao.
+     * @throws Exception Se nao encontrar elemento.
+     */
+    private No remover(String nome, No i) {
+
+        if (i == null) {
+            // não fazer nada: elemento procurado não existe
+        } else if (nome.compareTo(i.elemento.getNome()) < 0) {
+            i.esq = remover(nome, i.esq);
+        } else if (nome.compareTo(i.elemento.getNome()) > 0) {
+            i.dir = remover(nome, i.dir);
+        } else if (i.dir == null) {
+            i = i.esq;
+        } else if (i.esq == null) {
+            i = i.dir;
+        } else {
+            i.esq = maiorEsq(i, i.esq);
+        }
+
+        return i;
+    }
+
+    /**
+     * Metodo para trocar o elemento "removido" pelo maior da esquerda.
+     * @param i No que teve o elemento removido.
+     * @param j No da subarvore esquerda.
+     * @return No em analise, alterado ou nao.
+     */
+    private No maiorEsq(No i, No j) {
+
+        // Encontrou o maximo da subarvore esquerda.
+        if (j.dir == null) {
+            i.elemento = j.elemento; // Substitui i por j.
+            j = j.esq; // Substitui j por j.ESQ.
+
+            // Existe no a direita.
+        } else {
+            // Caminha para direita.
+            j.dir = maiorEsq(i, j.dir);
+        }
+        return j;
+    }
+
+    /**
+     * Metodo que retorna o maior elemento da árvore
+     * @return int maior elemento da árvore
+     */
+    public Series getMaior() {
+        Series resp = null;
+
+        if (raiz != null) {
+            No i;
+            for (i = raiz; i.dir != null; i = i.dir);
+            resp = i.elemento;
+        }
+
+        return resp;
+    }
+
+    /**
+     * Metodo que retorna o menor elemento da árvore
+     * @return int menor elemento da árvore
+     */
+    public Series getMenor() {
+        Series resp = null;
+
+        if (raiz != null) {
+            No i;
+            for (i = raiz; i.esq != null; i = i.esq);
+            resp = i.elemento;
         }
 
         return resp;
@@ -300,12 +400,63 @@ class ArvoreSeries {
 
 public class Main {
     public static void main(String[] args) {
-        /*
-        Requerimentos:
-        1. inserir elementos (não inserir se chave já estiver na árvore)
-        2. pesquisar objetos na árvore e **mostrar o caminho de pesquisa**
-        ↳ ex. de saída: raiz [esq/dir]* [SIM/NÃO]
-        3. remover elementos (verificar se existem na árvore)
-        */
+        // definir charset
+        MyIO.setCharset("UTF-8");
+
+        ArvoreSeries series = new ArvoreSeries();
+        int n;
+
+        String line = MyIO.readLine();
+
+        // inserção inicial
+        while (!line.equals("FIM")) {
+            Series serie = new Series();
+            try {
+                // tentar ler arquivo
+                serie.ler(line);
+            } catch (Exception e) {
+                MyIO.println("Erro ao ler arquivo `" + line + "`");
+            }
+            series.inserir(serie);
+            line = MyIO.readLine();
+        }
+
+        // obter quantidade de comandos de inserção/remoção
+        n = MyIO.readInt();
+
+        // inserir e remover series
+        for (int i = 0; i < n; i++) {
+            Series serie = new Series();
+
+            line = MyIO.readLine();
+            char option = line.charAt(0);
+
+            switch (option) {
+                case 'I':
+                    try {
+                        // tentar ler arquivo
+                        serie.ler(line.substring(2));
+                    } catch (Exception e) {
+                        MyIO.println("Erro ao ler arquivo `" + line + "`");
+                    }
+                    series.inserir(serie);
+                    break;
+                case 'R':
+                    series.remover(line.substring(2));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        line = MyIO.readLine();
+
+        // procurar nomes na árvore
+        while (!line.equals("FIM")) {
+            String resp = series.pesquisar(line.trim()) ? "SIM" : "NAO";
+            System.out.println(resp);
+
+            line = MyIO.readLine();
+        }
     }
 }

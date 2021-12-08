@@ -184,32 +184,41 @@ class Series {
         this.setNome(parseTitle(fileName));
 
         // procurar tabela que contem o restante dos dados
-        while (!br.readLine().contains("infobox_v2"));
+        while (!br.readLine().contains("infobox_v2"))
+            ;
 
         // buscar as linhas que precedem dado procurado, fazer parse e passar
         // valor ao respectivo atributo
-        while (!br.readLine().contains("Formato"));
+        while (!br.readLine().contains("Formato"))
+            ;
         this.setFormato(parseHtml(br.readLine()));
 
-        while (!br.readLine().contains("Duração"));
+        while (!br.readLine().contains("Duração"))
+            ;
         this.setDuracao(parseHtml(br.readLine()));
 
-        while (!br.readLine().contains("País de origem"));
+        while (!br.readLine().contains("País de origem"))
+            ;
         this.setPaisDeOrigem(parseHtml(br.readLine()));
 
-        while (!br.readLine().contains("Idioma original"));
+        while (!br.readLine().contains("Idioma original"))
+            ;
         this.setIdiomaOriginal(parseHtml(br.readLine()));
 
-        while (!br.readLine().contains("Emissora de televisão original"));
+        while (!br.readLine().contains("Emissora de televisão original"))
+            ;
         this.setEmissoraDeTelevisao(parseHtml(br.readLine()));
 
-        while (!br.readLine().contains("Transmissão original"));
+        while (!br.readLine().contains("Transmissão original"))
+            ;
         this.setTransmissaoOriginal(parseHtml(br.readLine()));
 
-        while (!br.readLine().contains("N.º de temporadas"));
+        while (!br.readLine().contains("N.º de temporadas"))
+            ;
         this.setNumeroTemporadas(parseHtmlInt(br.readLine()));
 
-        while (!br.readLine().contains("N.º de episódios"));
+        while (!br.readLine().contains("N.º de episódios"))
+            ;
         this.setNumeroEpisodios(parseHtmlInt(br.readLine()));
 
         // fechar arquivo
@@ -249,25 +258,21 @@ class No {
     public Series elemento;
     public No esq;
     public No dir;
-    public int nivel;
+    public boolean cor;
 
     public No(Series elemento) {
-        this(elemento, null, null, 1);
+        this(elemento, null, null, false);
     }
 
-    public No(Series elemento, No esq, No dir, int nivel) {
+    public No(Series elemento, boolean cor) {
+        this(elemento, null, null, cor);
+    }
+
+    public No(Series elemento, No esq, No dir, boolean cor) {
         this.elemento = elemento;
         this.esq = esq;
         this.dir = dir;
-        this.nivel = nivel;
-    }
-
-    public void setNivel() {
-        this.nivel = 1 + Math.max(getNivel(esq), getNivel(dir));
-    }
-
-    public static int getNivel(No no) {
-        return (no == null) ? 0 : no.nivel;
+        this.cor = cor;
     }
 }
 
@@ -302,73 +307,147 @@ class ArvoreSeries {
         return resp;
     }
 
-    public void inserir(Series serie) {
-        raiz = inserir(serie, raiz);
-    }
+    public void inserir(Series elemento) {
+        // Se a arvore estiver vazia
+        if (raiz == null) {
+            raiz = new No(elemento);
 
-    private No inserir(Series serie, No i) {
-        if (i == null) {
-            i = new No(serie);
-        } else if (serie.getNome().compareTo(i.elemento.getNome()) < 0) {
-            i.esq = inserir(serie, i.esq);
-        } else if (serie.getNome().compareTo(i.elemento.getNome()) > 0) {
-            i.dir = inserir(serie, i.dir);
-        } else {
-            // não fazer nada: chave já está na árvore
-        }
-        return balancear(i);
-    }
-
-    private No balancear(No no) {
-        if (no != null) {
-            int fator = No.getNivel(no.dir) - No.getNivel(no.esq);
-            if (Math.abs(fator) <= 1) {
-                no.setNivel();
-            } else if (fator == 2) {
-                int fatorFilhoDir = No.getNivel(no.dir.dir) - No.getNivel(no.dir.esq);
-                // Se o filho a direita tambem estiver desbalanceado
-                if (fatorFilhoDir == -1) {
-                    no.dir = rotacionarDir(no.dir);
-                }
-                no = rotacionarEsq(no);
-                // Se desbalanceada para a esquerda
-            } else if (fator == -2) {
-                int fatorFilhoEsq = No.getNivel(no.esq.dir) - No.getNivel(no.esq.esq);
-                // Se o filho a esquerda tambem estiver desbalanceado
-                if (fatorFilhoEsq == 1) {
-                    no.esq = rotacionarEsq(no.esq);
-                }
-                no = rotacionarDir(no);
+            // Senao, se a arvore tiver um elemento
+        } else if (raiz.esq == null && raiz.dir == null) {
+            if (elemento.getNome().compareTo(raiz.elemento.getNome()) < 0) {
+                raiz.esq = new No(elemento);
             } else {
-                // não fazer nada
+                raiz.dir = new No(elemento);
+            }
+
+            // Senao, se a arvore tiver dois elementos (raiz e dir)
+        } else if (raiz.esq == null) {
+            if (elemento.getNome().compareTo(raiz.elemento.getNome()) < 0) {
+                raiz.esq = new No(elemento);
+            } else if (elemento.getNome().compareTo(raiz.dir.elemento.getNome()) < 0) {
+                raiz.esq = new No(raiz.elemento);
+                raiz.elemento = elemento;
+            } else {
+                raiz.esq = new No(raiz.elemento);
+                raiz.elemento = raiz.dir.elemento;
+                raiz.dir.elemento = elemento;
+            }
+            raiz.esq.cor = raiz.dir.cor = false;
+
+            // Senao, se a arvore tiver dois elementos (raiz e esq)
+        } else if (raiz.dir == null) {
+            if (elemento.getNome().compareTo(raiz.elemento.getNome()) > 0) {
+                raiz.dir = new No(elemento);
+
+            } else if (elemento.getNome().compareTo(raiz.esq.elemento.getNome()) > 0) {
+                raiz.dir = new No(raiz.elemento);
+                raiz.elemento = elemento;
+
+            } else {
+                raiz.dir = new No(raiz.elemento);
+                raiz.elemento = raiz.esq.elemento;
+                raiz.esq.elemento = elemento;
+            }
+            raiz.esq.cor = raiz.dir.cor = false;
+
+            // Senao, a arvore tem tres ou mais elementos
+        } else {
+            inserir(elemento, null, null, null, raiz);
+        }
+        raiz.cor = false;
+    }
+
+    private void inserir(Series elemento, No bisavo, No avo, No pai, No i) {
+        if (i == null) {
+            if (elemento.getNome().compareTo(pai.elemento.getNome()) < 0) {
+                i = pai.esq = new No(elemento, true);
+            } else {
+                i = pai.dir = new No(elemento, true);
+            }
+            if (pai.cor) {
+                balancear(bisavo, avo, pai, i);
+            }
+        } else {
+            // Achou um 4-no: eh preciso fragmeta-lo e reequilibrar a arvore
+            if (i.esq != null && i.dir != null && i.esq.cor && i.dir.cor) {
+                i.cor = true;
+                i.esq.cor = i.dir.cor = false;
+                if (i == raiz) {
+                    i.cor = false;
+                } else if (pai.cor) {
+                    balancear(bisavo, avo, pai, i);
+                }
+            }
+            if (elemento.getNome().compareTo(i.elemento.getNome()) < 0) {
+                inserir(elemento, avo, pai, i, i.esq);
+            } else if (elemento.getNome().compareTo(i.elemento.getNome()) > 0) {
+                inserir(elemento, avo, pai, i, i.dir);
+            } else {
+                // não fazer nada: elemento repetido
             }
         }
-        return no;
     }
 
-    private No rotacionarDir(No no) {
+    private void balancear(No bisavo, No avo, No pai, No i) {
+        // Se o pai tambem e preto, reequilibrar a arvore, rotacionando o avo
+        if (pai.cor) {
+            // 4 s de reequilibrios e acoplamento
+            if (pai.elemento.getNome().compareTo(avo.elemento.getNome()) > 0) { // rotacao a esquerda ou
+                                                                                // direita-esquerda
+                if (i.elemento.getNome().compareTo(pai.elemento.getNome()) > 0) {
+                    avo = rotacaoEsq(avo);
+                } else {
+                    avo = rotacaoDirEsq(avo);
+                }
+            } else { // rotacao a direita ou esquerda-direita
+                if (i.elemento.getNome().compareTo(pai.elemento.getNome()) < 0) {
+                    avo = rotacaoDir(avo);
+                } else {
+                    avo = rotacaoEsqDir(avo);
+                }
+            }
+            if (bisavo == null) {
+                raiz = avo;
+            } else if (avo.elemento.getNome().compareTo(bisavo.elemento.getNome()) < 0) {
+                bisavo.esq = avo;
+            } else {
+                bisavo.dir = avo;
+            }
+            // reestabelecer as cores apos a rotacao
+            avo.cor = false;
+            avo.esq.cor = avo.dir.cor = true;
+        }
+    }
+
+    private No rotacaoDir(No no) {
         No noEsq = no.esq;
         No noEsqDir = noEsq.dir;
 
         noEsq.dir = no;
         no.esq = noEsqDir;
-        no.setNivel(); // Atualizar o nivel do no
-        noEsq.setNivel(); // Atualizar o nivel do noEsq
 
         return noEsq;
     }
 
-    private No rotacionarEsq(No no) {
+    private No rotacaoEsq(No no) {
         No noDir = no.dir;
         No noDirEsq = noDir.esq;
 
         noDir.esq = no;
         no.dir = noDirEsq;
 
-        no.setNivel(); // Atualizar o nivel do no
-        noDir.setNivel(); // Atualizar o nivel do noDir
         return noDir;
     }
+
+    private No rotacaoDirEsq(No no) {
+        no.dir = rotacaoDir(no.dir);
+        return rotacaoEsq(no);
+     }
+  
+     private No rotacaoEsqDir(No no) {
+        no.esq = rotacaoEsq(no.esq);
+        return rotacaoDir(no);
+     }
 }
 
 public class Main {
